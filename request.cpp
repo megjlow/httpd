@@ -1,5 +1,6 @@
 #include "Arduino.h"
 #include "request.h"
+#include "utils.h"
 
 
 Request::Request(char* input) {
@@ -42,6 +43,18 @@ Request::~Request() {
 		delete this->headers[i];
 	}
 	delete(this->headers);
+}
+
+void Request::parseUrl() {
+
+}
+
+int Request::getPinNumber() {
+	return 0;
+}
+
+int Request::getPinSetting() {
+	return 0;
 }
 
 

@@ -23,6 +23,9 @@ public:
 	Header* getHeader(int n);
 	char* getRequestUrl();
 	char* getRequestMethod();
+	void parseUrl();
+	int getPinNumber();
+	int getPinSetting();
 private:
 	Header** headers;
 	int nHeaders;
