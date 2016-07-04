@@ -6,6 +6,8 @@
 
 Request::Request(char* input) {
 	this->nHeaders = 0;
+	this->requestUrl = NULL;
+	this->requestMethod = NULL;
 	this->headerArray = new Headers();
 	Utils* utils = new Utils();
 	Tokens* headers = utils->tokeniseString(input, "\r\n");
@@ -13,8 +15,8 @@ Request::Request(char* input) {
 		if(strncmp(headers->token(i), "GET", 3) == 0 || strncmp(headers->token(i), "POST", 4) == 0) {
 			// this is the request - METHOD URL PROTOCOL
 			Tokens* urlTokens = utils->tokeniseString(headers->token(i), " ");
-			this->requestMethod = urlTokens->token(0);
-			this->requestUrl = urlTokens->token(1);
+			this->requestMethod = strdup(urlTokens->token(0));
+			this->requestUrl = strdup(urlTokens->token(1));
 			delete urlTokens;
 		}
 		else {
@@ -25,12 +27,14 @@ Request::Request(char* input) {
 		}
 	}
 
-	//delete headers;
+	delete headers;
 	delete utils;
 }
 
 Request::~Request() {
 	delete this->headerArray;
+	if(this->requestMethod) free(this->requestMethod);
+	if(this->requestUrl) free(this->requestUrl);
 }
 
 void Request::parseUrl() {

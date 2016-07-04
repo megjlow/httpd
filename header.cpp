@@ -13,8 +13,8 @@
  
 
 Header::Header(char* key, char* value) {
-	this->m_Key = key;
-	this->m_Value = value;
+	this->m_Key = strdup(key);
+	this->m_Value = strdup(value);
 }
 
 Header::~Header() {

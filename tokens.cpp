@@ -8,12 +8,10 @@ Tokens::Tokens() {
 }
 
 Tokens::~Tokens() {
-	/*
-	for(int i=0; i<nTokens; i++) {
+	for(int i=0; i<this->nTokens; i++) {
 		free(this->tokens[i]);
 	}
 	free(this->tokens);
-	*/
 }
 
 int Tokens::count() {
