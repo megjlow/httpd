@@ -1,48 +1,36 @@
 #include "Arduino.h"
 #include "request.h"
+#include "tokens.h"
 #include "utils.h"
 
 
 Request::Request(char* input) {
 	this->nHeaders = 0;
-	char* ptr = strdup(input);
-	char* token = NULL;
-	char* i;
-	int count = 0;
-	
-	// count the number of headers
-	token = strtok_r(ptr, "\r\n", &i);
-	while(token != NULL) {
-		if(strncmp(token, "GET", 3) != 0 && strncmp(token, "POST", 4) != 0) { // not going to count the request
-			this->nHeaders++;
-		}
-		token = strtok_r(NULL, "\r\n", &i);
-	}
-	free(ptr);
-	
-	this->headers = new Header*[nHeaders + 1];
-	token = strtok_r(input, "\r\n", &i);
-	while(token != NULL) {
-		if(strncmp(token, "GET", 3) != 0 && strncmp(token, "POST", 4) != 0) {
-			this->headers[count] = new Header(token);
-			count++;
+	this->headerArray = new Headers();
+	Utils* utils = new Utils();
+	Tokens* headers = utils->tokeniseString(input, "\r\n");
+	for(int i=0; i<headers->count(); i++) {
+		if(strncmp(headers->token(i), "GET", 3) == 0 || strncmp(headers->token(i), "POST", 4) == 0) {
+			// this is the request - METHOD URL PROTOCOL
+			Tokens* urlTokens = utils->tokeniseString(headers->token(i), " ");
+			this->requestMethod = urlTokens->token(0);
+			this->requestUrl = urlTokens->token(1);
+			delete urlTokens;
 		}
 		else {
-			// this is the request METHOD PATH PROTOCOL
-			char* d;
-			char* t = strtok_r(token, " ", &d);
-			this->requestMethod = strdup(t);
-			this->requestUrl = strdup(strtok_r(NULL, "", &d));
+			Tokens *header = utils->tokeniseString(headers->token(i), ":");
+			Header* h = new Header(header->token(0), header->token(1));
+			this->headerArray->addHeader(h);
+			delete header;
 		}
-		token = strtok_r(NULL, "\r\n", &i);
 	}
+
+	//delete headers;
+	delete utils;
 }
 
 Request::~Request() {
-	for(int i=0; i<nHeaders; i++) {
-		delete this->headers[i];
-	}
-	delete(this->headers);
+	delete this->headerArray;
 }
 
 void Request::parseUrl() {
@@ -59,15 +47,15 @@ int Request::getPinSetting() {
 
 
 int Request::headerCount() {
-	return this->nHeaders;
+	//return this->nHeaders;
 }
 
 Header* Request::getHeader(int n) {
-	return this->headers[n];
+	//return this->headers[n];
 }
 
 Header* Request::getHeader(char* name) {
-	return this->headers[0];
+	//return this->headers[0];
 }
 
 char* Request::getRequestUrl() {

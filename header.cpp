@@ -12,19 +12,9 @@
 // Cache-Control: no-cache
  
 
-Header::Header(char* input) {
-	char* ptr = strdup(input);
-	char* token = NULL;
-	char* i;
-	token = strtok_r(ptr, ":", &i);
-	if(token != NULL) {
-		this->m_Key = strdup(token);
-		token = strtok_r(NULL, ":", &i);
-		if(token != NULL) {
-			this->m_Value = strdup(token);
-		}
-	}
-	free(ptr);
+Header::Header(char* key, char* value) {
+	this->m_Key = key;
+	this->m_Value = value;
 }
 
 Header::~Header() {
@@ -38,4 +28,14 @@ char* Header::key() {
 
 char* Header::value() {
 	return this->m_Value;
+}
+
+char* Header::toString() {
+	char* retval;
+	size_t size = strlen(m_Key) + strlen(m_Value) + 2;
+	retval = (char*) calloc(size, sizeof(char*));
+	strcat(retval, m_Key);
+	strcat(retval, ":");
+	strcat(retval, m_Value);
+	return retval;
 }

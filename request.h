@@ -5,13 +5,26 @@
 
 class Header {
 public:
-	Header(char *header);
+	Header(char *key, char* value);
 	~Header();
 	char* key();
 	char* value();
+	char* toString();
 private:
 	char* m_Key;
 	char* m_Value;
+};
+
+class Headers {
+public:
+	Headers();
+	~Headers();
+	void addHeader(Header* header);
+	Header* getHeader(int i);
+	int count();
+private:
+	Header** headerArray;
+	int nHeaders;
 };
 
 class Request {
@@ -27,7 +40,7 @@ public:
 	int getPinNumber();
 	int getPinSetting();
 private:
-	Header** headers;
+	Headers* headerArray;
 	int nHeaders;
 	char* requestMethod;
 	char* requestUrl;
