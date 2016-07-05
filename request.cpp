@@ -5,6 +5,8 @@
 
 
 Request::Request(char* input) {
+	this->pinNumber = 0;
+	this->pinSetting = 0;
 	this->nHeaders = 0;
 	this->requestUrl = NULL;
 	this->requestMethod = NULL;
@@ -16,7 +18,8 @@ Request::Request(char* input) {
 			// this is the request - METHOD URL PROTOCOL
 			Tokens* urlTokens = utils->tokeniseString(headers->token(i), " ");
 			this->requestMethod = strdup(urlTokens->token(0));
-			this->requestUrl = strdup(urlTokens->token(1));
+			char* url = strdup(urlTokens->token(1));
+			this->setRequestUrl(url);
 			delete urlTokens;
 		}
 		else {
@@ -42,11 +45,11 @@ void Request::parseUrl() {
 }
 
 int Request::getPinNumber() {
-	return 0;
+	return this->pinNumber;
 }
 
 int Request::getPinSetting() {
-	return 0;
+	return this->pinSetting;
 }
 
 
@@ -64,6 +67,36 @@ Header* Request::getHeader(char* name) {
 
 char* Request::getRequestUrl() {
 	return this->requestUrl;
+}
+
+char* Request::setRequestUrl(char* url) {
+	char* retval = "200";
+	this->requestUrl = url;
+	char* ptr = strdup(url);
+	Utils* u = new Utils();
+	Tokens *t = u->tokeniseString(ptr, "/");
+	if(strcmp(this->requestMethod, "POST") == 0) {
+		if(t->count() >= 2) {
+			if(strncmp(t->token(0), "gpio", 4) == 0) {
+				// should be a pin number
+				String s = String(t->token(0));
+				int i = s.indexOf("gpio");
+				String x = s.substring(4);
+				this->pinNumber = x.toInt();
+			}
+			String s = String(t->token(1));
+			this->pinSetting = s.toInt();
+		}
+	}
+	else {
+		String s = String(t->token(0));
+		int i = s.indexOf("gpio");
+		String x = s.substring(4);
+		this->pinNumber = x.toInt();
+	}
+	free(ptr);
+	delete t;
+	return retval;
 }
 
 char* Request::getRequestMethod() {

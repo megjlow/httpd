@@ -44,6 +44,9 @@ private:
 	int nHeaders;
 	char* requestMethod;
 	char* requestUrl;
+	int pinNumber;
+	int pinSetting;
+	char* setRequestUrl(char* url);
 };
 
 #endif
