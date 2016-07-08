@@ -1,8 +1,9 @@
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
 #include "httpcontext.h"
-#include "request.h"
-#include "response.h"
+
+#include "httprequest.h"
+#include "httpresponse.h"
 
 
 HttpContext::HttpContext(WiFiClient* client) {

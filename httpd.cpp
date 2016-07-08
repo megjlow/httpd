@@ -2,8 +2,8 @@
 #include <ESP8266WiFi.h>
 #include "httpd.h"
 #include "httpcontext.h"
-#include "request.h"
-#include "response.h"
+#include "httprequest.h"
+#include "httpresponse.h"
 
 
 Httpd::Httpd() {;
@@ -17,17 +17,17 @@ HttpContext* Httpd::processRequest(WiFiClient* client) {
 	return NULL;
 }
 
-Request* Httpd::parseRequest(char* input){
-	Request* retval = new Request(input);
+HttpRequest* Httpd::parseRequest(char* input){
+	HttpRequest* retval = new HttpRequest(input);
 	return retval;
 }
 
-Response* Httpd::createResponse(char* code, int pinValue) {
-	Response* retval = new Response(code, pinValue);
+HttpResponse* Httpd::createResponse(char* code, int pinValue) {
+	HttpResponse* retval = new HttpResponse(code, pinValue);
 	return retval;
 }
 
-void Httpd::sendResponse(Response* response) {
+void Httpd::sendResponse(HttpResponse* response) {
 
 }
 

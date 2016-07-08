@@ -1,15 +1,16 @@
 #include <Arduino.h>
-#include "response.h"
 
-Response::Response(char* code, int pinValue) {
+#include "httpresponse.h"
+
+HttpResponse::HttpResponse(char* code, int pinValue) {
 	this->code = code;
 	this->pinValue = pinValue;
 }
 
-Response::~Response() {
+HttpResponse::~HttpResponse() {
 }
 
-char* Response::getResponse() {
+char* HttpResponse::getResponse() {
 	char* retval;
 	retval = (char*) calloc(200, sizeof(char));
 	strcat(retval, "HTTP/1.1 ");

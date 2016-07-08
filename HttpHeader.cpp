@@ -1,5 +1,6 @@
 #include <Arduino.h>
-#include "request.h"
+
+#include "httprequest.h"
 
 
 // Host: 192.168.2.102
@@ -12,25 +13,25 @@
 // Cache-Control: no-cache
  
 
-Header::Header(char* key, char* value) {
+HttpHeader::HttpHeader(char* key, char* value) {
 	this->m_Key = strdup(key);
 	this->m_Value = strdup(value);
 }
 
-Header::~Header() {
+HttpHeader::~HttpHeader() {
 	if(this->m_Key) free(this->m_Key);
 	if(this->m_Value) free(this->m_Value);
 }
 
-char* Header::key() {
+char* HttpHeader::key() {
 	return this->m_Key;
 }
 
-char* Header::value() {
+char* HttpHeader::value() {
 	return this->m_Value;
 }
 
-char* Header::toString() {
+char* HttpHeader::toString() {
 	char* retval;
 	size_t size = strlen(m_Key) + strlen(m_Value) + 2;
 	retval = (char*) calloc(size, sizeof(char*));

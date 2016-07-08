@@ -1,16 +1,19 @@
+#include "httprequest.h"
+
 #include "Arduino.h"
-#include "request.h"
+#include "HttpHeader.h"
+#include "HttpHeaders.h"
 #include "tokens.h"
 #include "utils.h"
 
 
-Request::Request(char* input) {
+HttpRequest::HttpRequest(char* input) {
 	this->pinNumber = 0;
 	this->pinSetting = 0;
 	this->nHeaders = 0;
 	this->requestUrl = NULL;
 	this->requestMethod = NULL;
-	this->headerArray = new Headers();
+	this->headerArray = new HttpHeaders();
 	Utils* utils = new Utils();
 	Tokens* headers = utils->tokeniseString(input, "\r\n");
 	for(int i=0; i<headers->count(); i++) {
@@ -24,7 +27,7 @@ Request::Request(char* input) {
 		}
 		else {
 			Tokens *header = utils->tokeniseString(headers->token(i), ":");
-			Header* h = new Header(header->token(0), header->token(1));
+			HttpHeader* h = new HttpHeader(header->token(0), header->token(1));
 			this->headerArray->addHeader(h);
 			delete header;
 		}
@@ -34,42 +37,38 @@ Request::Request(char* input) {
 	delete utils;
 }
 
-Request::~Request() {
+HttpRequest::~HttpRequest() {
 	delete this->headerArray;
 	if(this->requestMethod) free(this->requestMethod);
 	if(this->requestUrl) free(this->requestUrl);
 }
 
-void Request::parseUrl() {
-
-}
-
-int Request::getPinNumber() {
+int HttpRequest::getPinNumber() {
 	return this->pinNumber;
 }
 
-int Request::getPinSetting() {
+int HttpRequest::getPinSetting() {
 	return this->pinSetting;
 }
 
 
-int Request::headerCount() {
+int HttpRequest::headerCount() {
 	//return this->nHeaders;
 }
 
-Header* Request::getHeader(int n) {
+HttpHeader* HttpRequest::getHeader(int n) {
 	//return this->headers[n];
 }
 
-Header* Request::getHeader(char* name) {
+HttpHeader* HttpRequest::getHeader(char* name) {
 	//return this->headers[0];
 }
 
-char* Request::getRequestUrl() {
+char* HttpRequest::getRequestUrl() {
 	return this->requestUrl;
 }
 
-char* Request::setRequestUrl(char* url) {
+char* HttpRequest::setRequestUrl(char* url) {
 	char* retval = "200";
 	this->requestUrl = url;
 	char* ptr = strdup(url);
@@ -99,6 +98,6 @@ char* Request::setRequestUrl(char* url) {
 	return retval;
 }
 
-char* Request::getRequestMethod() {
+char* HttpRequest::getRequestMethod() {
 	return this->requestMethod;
 }
