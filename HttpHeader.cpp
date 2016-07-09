@@ -32,6 +32,8 @@ char* HttpHeader::value() {
 }
 
 char* HttpHeader::toString() {
+	return NULL;
+	/*
 	char* retval;
 	size_t size = strlen(m_Key) + strlen(m_Value) + 2;
 	retval = (char*) calloc(size, sizeof(char*));
@@ -39,4 +41,5 @@ char* HttpHeader::toString() {
 	strcat(retval, ":");
 	strcat(retval, m_Value);
 	return retval;
+	*/
 }

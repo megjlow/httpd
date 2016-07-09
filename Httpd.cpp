@@ -1,6 +1,6 @@
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
-#include "httpd.h"
+#include "Httpd.h"
 #include "httpcontext.h"
 #include "httprequest.h"
 #include "httpresponse.h"

@@ -91,6 +91,8 @@ char* HttpRequest::setRequestUrl(char* url) {
 		String s = String(t->token(0));
 		int i = s.indexOf("gpio");
 		String x = s.substring(4);
+		Serial.print("x is: ");
+		Serial.println(x);
 		this->pinNumber = x.toInt();
 	}
 	free(ptr);

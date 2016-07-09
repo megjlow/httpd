@@ -32,13 +32,17 @@ new (function() {
   	};
   	
   	ext.setDigital = function(setting, url) {
-    	var url = 'http://%%%%%%/gpio2/' + setting; 
+  		var s = 0;
+  		if(setting == 'off') {
+  			s = 1;
+  		}
+    	var url = 'http://%%%%%%/gpio2/' + s; 
 		console.log('setting' + setting);
 		$.ajax({
 			type: 'POST',
 			url: url,
 			success: function(response) {
-		}
+			}
 		});
 	};
 
