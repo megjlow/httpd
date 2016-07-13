@@ -9,6 +9,7 @@ public:
 	Utils();
 	~Utils();
 	Tokens* tokeniseString(char* input, char* token);
+	Tokens* tokeniseHeader(char* header, char* delim);
 };
 
 #endif

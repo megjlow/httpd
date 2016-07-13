@@ -5,7 +5,7 @@
 
 HttpHeaders::HttpHeaders() {
 	this->nHeaders = 0;
-	this->headerArray = (HttpHeader**) calloc(10, sizeof(HttpHeader*));
+	this->headerArray = (HttpHeader**) calloc(30, sizeof(HttpHeader*));
 }
 
 HttpHeaders::~HttpHeaders() {

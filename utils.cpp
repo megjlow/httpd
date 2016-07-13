@@ -23,3 +23,15 @@ Tokens* Utils::tokeniseString(char* input, char* delim) {
 	}
 	return retval;
 }
+
+Tokens* Utils::tokeniseHeader(char* header, char* delim) {
+	Tokens* retval = new Tokens();
+
+	char* token = NULL;
+	char* c;
+	token = strtok_r(header, delim, &c);
+	retval ->addToken(token);
+	retval->addToken(c);
+
+	return retval;
+}
