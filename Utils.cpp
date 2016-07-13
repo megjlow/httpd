@@ -1,7 +1,6 @@
 #include <Arduino.h>
-#include "utils.h"
+#include "Utils.h"
 
-#include "httprequest.h"
 
 Utils::Utils() {
 

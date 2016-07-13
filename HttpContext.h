@@ -5,8 +5,8 @@
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
 
-#include "httprequest.h"
-#include "httpresponse.h"
+#include "HttpRequest.h"
+#include "HttpResponse.h"
 #include "HttpHeaders.h"
 
 class HttpContext {

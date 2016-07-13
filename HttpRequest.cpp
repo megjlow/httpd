@@ -1,10 +1,10 @@
-#include "httprequest.h"
+#include "HttpRequest.h"
 
 #include "Arduino.h"
 #include "HttpHeader.h"
 #include "HttpHeaders.h"
-#include "tokens.h"
-#include "utils.h"
+#include "Tokens.h"
+#include "Utils.h"
 
 
 HttpRequest::HttpRequest(char* input) {
@@ -16,6 +16,8 @@ HttpRequest::HttpRequest(char* input) {
 	this->headerArray = new HttpHeaders();
 	Utils* utils = new Utils();
 	Tokens* headers = utils->tokeniseString(input, "\r\n");
+	Serial.print("headers ");
+	Serial.println(headers->count());
 	for(int i=0; i<headers->count(); i++) {
 		if(strncmp(headers->token(i), "GET", 3) == 0 || strncmp(headers->token(i), "POST", 4) == 0) {
 			// this is the request - METHOD URL PROTOCOL
@@ -26,10 +28,15 @@ HttpRequest::HttpRequest(char* input) {
 			delete urlTokens;
 		}
 		else {
-			Tokens *header = utils->tokeniseString(headers->token(i), ":");
-			HttpHeader* h = new HttpHeader(header->token(0), header->token(1));
-			this->headerArray->addHeader(h);
-			delete header;
+			if(strchr(headers->token(i), ':') != NULL) {
+				Tokens *header = utils->tokeniseHeader(headers->token(i), ":");
+				HttpHeader* h = new HttpHeader(header->token(0), header->token(1));
+				this->headerArray->addHeader(h);
+				delete header;
+			}
+			else {
+				Serial.println(headers->token(i));
+			}
 		}
 	}
 
@@ -91,8 +98,6 @@ char* HttpRequest::setRequestUrl(char* url) {
 		String s = String(t->token(0));
 		int i = s.indexOf("gpio");
 		String x = s.substring(4);
-		Serial.print("x is: ");
-		Serial.println(x);
 		this->pinNumber = x.toInt();
 	}
 	free(ptr);

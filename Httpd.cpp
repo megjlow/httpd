@@ -1,9 +1,9 @@
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
 #include "Httpd.h"
-#include "httpcontext.h"
-#include "httprequest.h"
-#include "httpresponse.h"
+#include "HttpContext.h"
+#include "HttpRequest.h"
+#include "HttpResponse.h"
 
 
 Httpd::Httpd() {;

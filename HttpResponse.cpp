@@ -1,6 +1,6 @@
 #include <Arduino.h>
 
-#include "httpresponse.h"
+#include "HttpResponse.h"
 
 HttpResponse::HttpResponse(char* code, int pinValue) {
 	this->code = code;
