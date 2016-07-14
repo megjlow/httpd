@@ -1,32 +1,23 @@
 #include <Arduino.h>
 #include "Tokens.h"
+#include "Array.h"
 
-Tokens::Tokens() {
-	// for the moment start with 50 but we could start with 10 and add another 10 each time it's required
-	this->tokens = (char**)calloc(50, sizeof(char*));
-	this->nTokens = 0;
+Tokens::Tokens(): Array() {
 }
 
-Tokens::~Tokens() {
-	for(int i=0; i<this->nTokens; i++) {
-		free(this->tokens[i]);
-	}
-	free(this->tokens);
-}
 
 int Tokens::count() {
-	return nTokens;
+	return Array::count();
 }
 
 void Tokens::addToken(char* token) {
-	this->tokens[this->nTokens] = strdup(token);
-	this->nTokens++;
+	// copy to "new"ed char array, Array will "delete" everything
+	char* buf = new char[strlen(token) + 1];
+	memcpy(buf, token, strlen(token));
+	buf[strlen(token)] = NULL;
+	Array::add((void*) buf);
 }
 
-char* Tokens::token(int n) {
-	char* retval = NULL;
-	if(n < this->nTokens) {
-		retval = this->tokens[n];
-	}
-	return retval;
+char* Tokens::getToken(int n) {
+	return (char*) Array::get(n);
 }

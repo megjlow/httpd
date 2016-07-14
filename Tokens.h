@@ -2,17 +2,14 @@
 #define tokens_h
 
 #include <Arduino.h>
+#include "Array.h"
 
-class Tokens {
+class Tokens: public Array {
 public:
 	Tokens();
-	~Tokens();
 	int count();
-	char* token(int n);
+	char* getToken(int n);
 	void addToken(char* token);
-private:
-	char** tokens;
-	int nTokens;
 };
 
 #endif

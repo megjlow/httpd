@@ -20,7 +20,6 @@ public:
 	int getPinSetting();
 private:
 	HttpHeaders* headerArray;
-	int nHeaders;
 	char* requestMethod;
 	char* requestUrl;
 	int pinNumber;

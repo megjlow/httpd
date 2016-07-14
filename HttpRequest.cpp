@@ -10,7 +10,6 @@
 HttpRequest::HttpRequest(char* input) {
 	this->pinNumber = 0;
 	this->pinSetting = 0;
-	this->nHeaders = 0;
 	this->requestUrl = NULL;
 	this->requestMethod = NULL;
 	this->headerArray = new HttpHeaders();
@@ -19,23 +18,23 @@ HttpRequest::HttpRequest(char* input) {
 	Serial.print("headers ");
 	Serial.println(headers->count());
 	for(int i=0; i<headers->count(); i++) {
-		if(strncmp(headers->token(i), "GET", 3) == 0 || strncmp(headers->token(i), "POST", 4) == 0) {
+		if(strncmp(headers->getToken(i), "GET", 3) == 0 || strncmp(headers->getToken(i), "POST", 4) == 0) {
 			// this is the request - METHOD URL PROTOCOL
-			Tokens* urlTokens = utils->tokeniseString(headers->token(i), " ");
-			this->requestMethod = strdup(urlTokens->token(0));
-			char* url = strdup(urlTokens->token(1));
+			Tokens* urlTokens = utils->tokeniseString(headers->getToken(i), " ");
+			this->requestMethod = strdup(urlTokens->getToken(0));
+			char* url = strdup(urlTokens->getToken(1));
 			this->setRequestUrl(url);
 			delete urlTokens;
 		}
 		else {
-			if(strchr(headers->token(i), ':') != NULL) {
-				Tokens *header = utils->tokeniseHeader(headers->token(i), ":");
-				HttpHeader* h = new HttpHeader(header->token(0), header->token(1));
-				this->headerArray->addHeader(h);
+			if(strchr(headers->getToken(i), ':') != NULL) {
+				Tokens *header = utils->tokeniseHeader(headers->getToken(i), ":");
+				HttpHeader* h = new HttpHeader(header->getToken(0), header->getToken(1));
+				this->headerArray->add(h);
 				delete header;
 			}
 			else {
-				Serial.println(headers->token(i));
+				Serial.println(headers->getToken(i));
 			}
 		}
 	}
@@ -60,7 +59,7 @@ int HttpRequest::getPinSetting() {
 
 
 int HttpRequest::headerCount() {
-	//return this->nHeaders;
+	this->headerArray->count();
 }
 
 HttpHeader* HttpRequest::getHeader(int n) {
@@ -83,19 +82,19 @@ char* HttpRequest::setRequestUrl(char* url) {
 	Tokens *t = u->tokeniseString(ptr, "/");
 	if(strcmp(this->requestMethod, "POST") == 0) {
 		if(t->count() >= 2) {
-			if(strncmp(t->token(0), "gpio", 4) == 0) {
+			if(strncmp(t->getToken(0), "gpio", 4) == 0) {
 				// should be a pin number
-				String s = String(t->token(0));
+				String s = String(t->getToken(0));
 				int i = s.indexOf("gpio");
 				String x = s.substring(4);
 				this->pinNumber = x.toInt();
 			}
-			String s = String(t->token(1));
+			String s = String(t->getToken(1));
 			this->pinSetting = s.toInt();
 		}
 	}
 	else {
-		String s = String(t->token(0));
+		String s = String(t->getToken(0));
 		int i = s.indexOf("gpio");
 		String x = s.substring(4);
 		this->pinNumber = x.toInt();
