@@ -15,16 +15,16 @@ HttpRequest::HttpRequest(char* input) {
 	this->headerArray = new HttpHeaders();
 	Utils* utils = new Utils();
 	Tokens* headers = utils->tokeniseString(input, "\r\n");
-	Serial.print("headers ");
-	Serial.println(headers->count());
 	for(int i=0; i<headers->count(); i++) {
 		if(strncmp(headers->getToken(i), "GET", 3) == 0 || strncmp(headers->getToken(i), "POST", 4) == 0) {
 			// this is the request - METHOD URL PROTOCOL
-			Tokens* urlTokens = utils->tokeniseString(headers->getToken(i), " ");
+			Utils* u = new Utils();
+			Tokens* urlTokens = u->tokeniseString(headers->getToken(i), " ");
 			this->requestMethod = strdup(urlTokens->getToken(0));
 			char* url = strdup(urlTokens->getToken(1));
 			this->setRequestUrl(url);
 			delete urlTokens;
+			delete u;
 		}
 		else {
 			if(strchr(headers->getToken(i), ':') != NULL) {
@@ -34,7 +34,7 @@ HttpRequest::HttpRequest(char* input) {
 				delete header;
 			}
 			else {
-				Serial.println(headers->getToken(i));
+				//Serial.println(headers->getToken(i));
 			}
 		}
 	}
@@ -45,8 +45,8 @@ HttpRequest::HttpRequest(char* input) {
 
 HttpRequest::~HttpRequest() {
 	delete this->headerArray;
-	if(this->requestMethod) free(this->requestMethod);
-	if(this->requestUrl) free(this->requestUrl);
+	free(this->requestMethod);
+	free(this->requestUrl);
 }
 
 int HttpRequest::getPinNumber() {
@@ -74,12 +74,12 @@ char* HttpRequest::getRequestUrl() {
 	return this->requestUrl;
 }
 
-char* HttpRequest::setRequestUrl(char* url) {
-	char* retval = "200";
+void HttpRequest::setRequestUrl(char* url) {
 	this->requestUrl = url;
 	char* ptr = strdup(url);
 	Utils* u = new Utils();
 	Tokens *t = u->tokeniseString(ptr, "/");
+
 	if(strcmp(this->requestMethod, "POST") == 0) {
 		if(t->count() >= 2) {
 			if(strncmp(t->getToken(0), "gpio", 4) == 0) {
@@ -101,7 +101,7 @@ char* HttpRequest::setRequestUrl(char* url) {
 	}
 	free(ptr);
 	delete t;
-	return retval;
+	delete u;
 }
 
 char* HttpRequest::getRequestMethod() {

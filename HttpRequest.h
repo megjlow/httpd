@@ -24,7 +24,7 @@ private:
 	char* requestUrl;
 	int pinNumber;
 	int pinSetting;
-	char* setRequestUrl(char* url);
+	void setRequestUrl(char* url);
 };
 
 #endif

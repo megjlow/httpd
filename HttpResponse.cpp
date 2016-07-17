@@ -3,16 +3,16 @@
 #include "HttpResponse.h"
 
 HttpResponse::HttpResponse(char* code, int pinValue) {
-	this->code = code;
+	this->code = strdup(code);
 	this->pinValue = pinValue;
 }
 
 HttpResponse::~HttpResponse() {
+	free(this->code);
 }
 
 char* HttpResponse::getResponse() {
-	char* retval;
-	retval = (char*) calloc(200, sizeof(char));
+	char* retval = new char[400];
 	strcat(retval, "HTTP/1.1 ");
 	if(strcmp(this->code, "200") == 0) {
 		strcat(retval, "200 OK\r\n");
@@ -22,5 +22,6 @@ char* HttpResponse::getResponse() {
 	c[0] = this->pinValue + '0';
 	strcat(retval, c);
 	strcat(retval, "\"}");
+	strcat(retval, "\0");
 	return retval;
 }

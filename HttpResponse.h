@@ -11,6 +11,7 @@ public:
 private:
 	char* code;
 	int pinValue;
+	char* retval;
 };
 
 #endif

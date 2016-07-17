@@ -4,13 +4,17 @@
 #include <Arduino.h>
 
 #include "HttpHeader.h"
-#include "Array.h"
 
-class HttpHeaders: public Array {
+class HttpHeaders {
 public:
+	HttpHeaders();
+	~HttpHeaders();
 	void add(HttpHeader* header);
 	HttpHeader* get(int i);
 	int count();
+private:
+	HttpHeader** headerArray;
+	int nHeaders;
 };
 
 #endif

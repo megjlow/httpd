@@ -1,19 +1,22 @@
 #include "Array.h"
 #include <Arduino.h>
 
+#include <HttpHeader.h>
+
+
 /*
 Only for elements which can be deleted i.e. must have been created with a new call.
  */
 Array::Array() {
 	this->nElements = 0;
-	this->elementArray = (void**) calloc(30, sizeof(void*));
+	this->elementArray = new void*[30];
 }
 
 Array::~Array() {
 	for(int i=0; i<this->nElements; i++) {
 		delete this->elementArray[i];
 	}
-	free(this->elementArray);
+	delete[] this->elementArray;
 }
 
 void Array::add(void* element) {

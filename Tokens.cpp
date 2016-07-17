@@ -1,13 +1,20 @@
 #include <Arduino.h>
 #include "Tokens.h"
-#include "Array.h"
 
-Tokens::Tokens(): Array() {
+Tokens::Tokens() {
+	this->tokenArray = new char*[30];
+	this->nTokens = 0;
 }
 
+Tokens::~Tokens() {
+	for(int i=0; i<this->nTokens; i++) {
+		delete this->tokenArray[i];
+	}
+	delete[] this->tokenArray;
+}
 
 int Tokens::count() {
-	return Array::count();
+	return this->nTokens;
 }
 
 void Tokens::addToken(char* token) {
@@ -15,9 +22,14 @@ void Tokens::addToken(char* token) {
 	char* buf = new char[strlen(token) + 1];
 	memcpy(buf, token, strlen(token));
 	buf[strlen(token)] = NULL;
-	Array::add((void*) buf);
+	this->tokenArray[nTokens] = buf;
+	this->nTokens++;
 }
 
 char* Tokens::getToken(int n) {
-	return (char*) Array::get(n);
+	char* retval = NULL;
+	if(n < this->nTokens) {
+		retval = this->tokenArray[n];
+	}
+	return retval;
 }

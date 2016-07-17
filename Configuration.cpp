@@ -14,7 +14,7 @@ Configuration::Configuration(char* fname): Array() {
 	}
 	else {
 		Utils* utils = new Utils();
-		char* buffer = (char*) calloc(2048, sizeof(char));
+		char* buffer = (char*) calloc(1024, sizeof(char));
 		f.readBytes(buffer, f.size());
 		Tokens* lines = utils->tokeniseString(buffer, "\r\n");
 		for(int i=0; i<lines->count(); i++) {
