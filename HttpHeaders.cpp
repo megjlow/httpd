@@ -2,7 +2,6 @@
 
 #include "HttpHeaders.h"
 #include "HttpHeader.h"
-#include "Array.h"
 
 HttpHeaders::HttpHeaders() {
 	this->nHeaders = 0;

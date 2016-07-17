@@ -5,6 +5,8 @@
 #include "HttpHeaders.h"
 #include "Tokens.h"
 #include "Utils.h"
+#include "RequestParams.h"
+#include "FS.h"
 
 
 HttpRequest::HttpRequest(char* input) {
@@ -13,6 +15,7 @@ HttpRequest::HttpRequest(char* input) {
 	this->requestUrl = NULL;
 	this->requestMethod = NULL;
 	this->headerArray = new HttpHeaders();
+	this->params = new RequestParams();
 	Utils* utils = new Utils();
 	Tokens* headers = utils->tokeniseString(input, "\r\n");
 	for(int i=0; i<headers->count(); i++) {
@@ -34,7 +37,43 @@ HttpRequest::HttpRequest(char* input) {
 				delete header;
 			}
 			else {
-				//Serial.println(headers->getToken(i));
+				Serial.println(headers->getToken(i));
+				Tokens* t = utils->tokeniseString(headers->getToken(i), "&");
+				char* filename = NULL;
+				char* contents = NULL;
+				for(int j=0; j<t->count(); j++) {
+					Tokens* x = utils->tokeniseString(t->getToken(j), "=");
+					for(int k=0; k<x->count(); k++) {
+						if(strcmp(x->getToken(0), "filename") == 0) {
+							filename = strdup(x->getToken(1));
+						}
+						if(strcmp(x->getToken(0), "contents") == 0) {
+							contents = strdup(x->getToken(1));
+						}
+					}
+					delete x;
+				}
+				Serial.print("filename: ");
+				Serial.println(filename);
+				Serial.print("contents: ");
+				Serial.print(contents);
+				if(filename != NULL && contents != NULL) {
+					String fname = String(filename);
+					fname.replace("%2F", "/");
+					File f = SPIFFS.open(fname, "w");
+					String s = String(contents);
+					s.replace("%0A", "\n");
+					s.replace("%3D", "=");
+					f.print(s);
+					f.close();
+				}
+				if(filename != NULL) {
+					free(filename);
+				}
+				if(contents != NULL) {
+					free(contents);
+				}
+				delete t;
 			}
 		}
 	}
@@ -45,6 +84,7 @@ HttpRequest::HttpRequest(char* input) {
 
 HttpRequest::~HttpRequest() {
 	delete this->headerArray;
+	delete this->params;
 	free(this->requestMethod);
 	free(this->requestUrl);
 }

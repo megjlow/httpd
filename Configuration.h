@@ -3,13 +3,16 @@
 
 #include <Arduino.h>
 #include "KeyValuePair.h"
-#include "Array.h"
 
 
-class Configuration: public Array {
+class Configuration {
 public:
 	Configuration(char* fname);
+	~Configuration();
 	char* getConfigurationSetting(char* name);
+private:
+	KeyValuePair** settings;
+	int nSettings;
 };
 
 #endif

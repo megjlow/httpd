@@ -4,9 +4,10 @@
 #include <Utils.h>
 #include <Tokens.h>
 #include <KeyValuePair.h>
-#include <Array.h>
 
-Configuration::Configuration(char* fname): Array() {
+Configuration::Configuration(char* fname) {
+	this->settings = new KeyValuePair*[10];
+	this->nSettings = 0;
 	File f = SPIFFS.open("/config.txt", "r");
 	if(!f) {
 		Serial.print("Configuration: failed to open configuration file - ");
@@ -22,7 +23,8 @@ Configuration::Configuration(char* fname): Array() {
 				Tokens* setting = utils->tokeniseString(lines->getToken(i), "=");
 				if(setting->count() >= 2) {
 					KeyValuePair* s = new KeyValuePair(setting->getToken(0), setting->getToken(1));
-					Array::add((void*)s);
+					this->settings[this->nSettings] = s;
+					this->nSettings++;
 				}
 				delete setting;
 			}
@@ -34,13 +36,18 @@ Configuration::Configuration(char* fname): Array() {
 	}
 }
 
+Configuration::~Configuration() {
+	for(int i=0; i<this->nSettings; i++) {
+		delete this->settings[i];
+	}
+	delete[] this->settings;
+}
 
 char* Configuration::getConfigurationSetting(char* name) {
 	char* retval = NULL;
-	for(int i=0; i<Array::count(); i++) {
-		KeyValuePair* pair = (KeyValuePair*) Array::get(i);
-		if(strcmp(pair->key(), name) == 0) {
-			retval = pair->value();
+	for(int i=0; i<this->nSettings; i++) {
+		if(strcmp(this->settings[i]->key(), name) == 0) {
+			retval = this->settings[i]->value();
 			break;
 		}
 	}

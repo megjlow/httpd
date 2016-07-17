@@ -34,3 +34,9 @@ Tokens* Utils::tokeniseHeader(char* header, char* delim) {
 
 	return retval;
 }
+
+char* Utils::urlDecode(char* input) {
+	char* retval = NULL;
+
+	return retval;
+}

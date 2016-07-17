@@ -5,6 +5,7 @@
 
 #include "HttpHeader.h"
 #include "HttpHeaders.h"
+#include "RequestParams.h"
 
 class HttpRequest {
 public: 
@@ -20,6 +21,7 @@ public:
 	int getPinSetting();
 private:
 	HttpHeaders* headerArray;
+	RequestParams* params;
 	char* requestMethod;
 	char* requestUrl;
 	int pinNumber;
