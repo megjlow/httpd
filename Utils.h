@@ -10,7 +10,7 @@ public:
 	~Utils();
 	Tokens* tokeniseString(char* input, char* token);
 	Tokens* tokeniseHeader(char* header, char* delim);
-	char* urlDecode(char* input);
+	void urlDecode(char* dst, const char* src);
 };
 
 #endif

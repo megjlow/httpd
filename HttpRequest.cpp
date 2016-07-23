@@ -5,7 +5,7 @@
 #include "HttpHeaders.h"
 #include "Tokens.h"
 #include "Utils.h"
-#include "RequestParams.h"
+#include "RequestParameters.h"
 #include "FS.h"
 
 
@@ -15,7 +15,7 @@ HttpRequest::HttpRequest(char* input) {
 	this->requestUrl = NULL;
 	this->requestMethod = NULL;
 	this->headerArray = new HttpHeaders();
-	this->params = new RequestParams();
+	this->requestParameters = new RequestParameters();
 	Utils* utils = new Utils();
 	Tokens* headers = utils->tokeniseString(input, "\r\n");
 	for(int i=0; i<headers->count(); i++) {
@@ -37,42 +37,10 @@ HttpRequest::HttpRequest(char* input) {
 				delete header;
 			}
 			else {
-				Serial.println(headers->getToken(i));
 				Tokens* t = utils->tokeniseString(headers->getToken(i), "&");
-				char* filename = NULL;
-				char* contents = NULL;
 				for(int j=0; j<t->count(); j++) {
-					Tokens* x = utils->tokeniseString(t->getToken(j), "=");
-					for(int k=0; k<x->count(); k++) {
-						if(strcmp(x->getToken(0), "filename") == 0) {
-							filename = strdup(x->getToken(1));
-						}
-						if(strcmp(x->getToken(0), "contents") == 0) {
-							contents = strdup(x->getToken(1));
-						}
-					}
-					delete x;
-				}
-				Serial.print("filename: ");
-				Serial.println(filename);
-				Serial.print("contents: ");
-				Serial.print(contents);
-				if(filename != NULL && contents != NULL) {
-					String fname = String(filename);
-					fname.replace("%2F", "/");
-					File f = SPIFFS.open(fname, "w");
-					String s = String(contents);
-					s.replace("%0A", "\n");
-					s.replace("%3D", "=");
-					f.print(s);
-					f.close();
-				}
-				if(filename != NULL) {
-					free(filename);
-				}
-				if(contents != NULL) {
-					free(contents);
-				}
+					this->requestParameters->addRequestParameter(t->getToken(j));
+				};
 				delete t;
 			}
 		}
@@ -84,7 +52,7 @@ HttpRequest::HttpRequest(char* input) {
 
 HttpRequest::~HttpRequest() {
 	delete this->headerArray;
-	delete this->params;
+	delete this->requestParameters;
 	free(this->requestMethod);
 	free(this->requestUrl);
 }
@@ -107,7 +75,13 @@ HttpHeader* HttpRequest::getHeader(int n) {
 }
 
 HttpHeader* HttpRequest::getHeader(char* name) {
-	//return this->headers[0];
+	HttpHeader* retval = NULL;
+	for(int i=0; i<this->headerArray->count(); i++) {
+		if(strcmp(this->headerArray->get(i)->key(), name) == 0) {
+			retval = this->headerArray->get(i);
+		}
+	}
+	return retval;
 }
 
 char* HttpRequest::getRequestUrl() {
@@ -146,4 +120,8 @@ void HttpRequest::setRequestUrl(char* url) {
 
 char* HttpRequest::getRequestMethod() {
 	return this->requestMethod;
+}
+
+char* HttpRequest::getParameter(char* name) {
+	return this->requestParameters->getRequestParameter(name);
 }

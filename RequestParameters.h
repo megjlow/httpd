@@ -6,11 +6,12 @@
 #include "KeyValuePair.h"
 
 
-class RequestParams {
+class RequestParameters {
 public:
-	RequestParams();
-	~RequestParams();
-	char* getRequestParam(char* name);
+	RequestParameters();
+	~RequestParameters();
+	char* getRequestParameter(char* name);
+	void addRequestParameter(char* param);
 private:
 	KeyValuePair** params;
 	int nParams;
