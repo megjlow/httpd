@@ -14,17 +14,15 @@ RequestParameters::~RequestParameters() {
 }
 
 void RequestParameters::addRequestParameter(char* value) {
+	Serial.println(value);
 	if(strchr(value, '=') != NULL) {
 		Utils* utils = new Utils();
-		Serial.println(value);
 		Tokens* tokens = utils->tokeniseString(value, "=");
 		if(tokens->count() >= 2) {
-			Serial.print("token0 ");
-			Serial.println(tokens->getToken(0));
-			Serial.print("token1 ");
-			Serial.println(tokens->getToken(1));
 			char* key = new char[strlen(tokens->getToken(0)) + 1];
 			char* value = new char[strlen(tokens->getToken(1)) + 1];
+			memset(key, 0, sizeof(key));
+			memset(value, 0, sizeof(value));
 			utils->urlDecode(key, tokens->getToken(0));
 			utils->urlDecode(value, tokens->getToken(1));
 			KeyValuePair* kvp = new KeyValuePair(key, value);

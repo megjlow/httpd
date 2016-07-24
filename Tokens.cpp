@@ -8,9 +8,9 @@ Tokens::Tokens() {
 
 Tokens::~Tokens() {
 	for(int i=0; i<this->nTokens; i++) {
-		delete this->tokenArray[i];
+		free(this->tokenArray[i]);
 	}
-	delete[] this->tokenArray;
+	delete this->tokenArray;
 }
 
 int Tokens::count() {
@@ -18,11 +18,7 @@ int Tokens::count() {
 }
 
 void Tokens::addToken(char* token) {
-	// copy to "new"ed char array, Array will "delete" everything
-	char* buf = new char[strlen(token) + 1];
-	memcpy(buf, token, strlen(token));
-	buf[strlen(token)] = NULL;
-	this->tokenArray[nTokens] = buf;
+	this->tokenArray[nTokens] = strdup(token);
 	this->nTokens++;
 }
 

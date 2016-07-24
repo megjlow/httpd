@@ -19,9 +19,7 @@ HttpResponse::~HttpResponse() {
 
 char* HttpResponse::getResponse() {
 	this->retval = new char[400];
-	for(int i=0; i<400; i++) {
-		this->retval[i] = '\0';
-	}
+	memset(this->retval, 0, sizeof(this->retval));
 	//char* retval = new char[200];
 	strcat(this->retval, "HTTP/1.1 ");
 	if(strcmp(this->code, "200") == 0) {
@@ -64,7 +62,6 @@ void HttpResponse::sendFile(WiFiClient client, File f) {
 		char outbuff[256];
 		int available = 0;
 		size_t read = 0;
-		int written = 0;
 		while((available = f.available()) > 0) {
 			if(available > sizeof(outbuff)) {
 				read = f.readBytes((char*)outbuff, sizeof(outbuff));
@@ -72,13 +69,8 @@ void HttpResponse::sendFile(WiFiClient client, File f) {
 			else {
 				read = f.readBytes((char*)outbuff, available);
 			}
-			written = written + read;
 			client.write((char*)outbuff, read);
 		}
-		Serial.print("file size: ");
-		Serial.println(f.size());
-		Serial.print("wrote: ");
-		Serial.println(written);
 		f.close();
 	}
 }
