@@ -39,6 +39,12 @@ char* HttpResponse::getResponse() {
 	return this->retval;
 }
 
+char* HttpResponse::pingResponse() {
+	this->retval = new char[200];
+	strcat(this->retval, "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nAccess-Control-Allow-Origin: *\r\n\r\n<html><head></head><body>PING</body></html>");
+	return this->retval;
+}
+
 void HttpResponse::sendFile(WiFiClient client, File f) {
 	if(f) {
 		client.print("HTTP/1.1 200 OK\r\n");

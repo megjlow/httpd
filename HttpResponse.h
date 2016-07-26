@@ -11,6 +11,7 @@ public:
 	~HttpResponse();
 	char* getResponse();
 	void sendFile(WiFiClient client, File f);
+	char* pingResponse();
 private:
 	char* code;
 	int pinValue;
