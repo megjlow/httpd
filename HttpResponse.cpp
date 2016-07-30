@@ -41,6 +41,7 @@ char* HttpResponse::getResponse() {
 
 char* HttpResponse::pingResponse() {
 	this->retval = new char[200];
+	memset(this->retval, 0, sizeof(this->retval));
 	strcat(this->retval, "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nAccess-Control-Allow-Origin: *\r\n\r\n<html><head></head><body>PING</body></html>");
 	return this->retval;
 }
