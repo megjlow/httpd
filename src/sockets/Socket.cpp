@@ -26,6 +26,14 @@ namespace httpd {
 				return _client.print(buffer);
 			}
 
+			void Socket::flush() {
+				_client.flush();
+			}
+
+			void Socket::stop() {
+				_client.stop();
+			}
+
 #elif ARDUINO_STM32_FEATHER
 			Socket::Socket(AdafruitTCP client) {
 				this->_client = client;
@@ -45,6 +53,14 @@ namespace httpd {
 
 			size_t Socket::print(const char buffer[]) {
 				return _client.print(buffer);
+			}
+
+			void Socket::flush() {
+				_client.flush();
+			}
+
+			void Socket::stop() {
+				_client.stop();
 			}
 
 		#endif

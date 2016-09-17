@@ -21,12 +21,10 @@ HttpContext::HttpContext(WiFiClient client) {
 */
 
 HttpContext::~HttpContext() {
-	/*
-	this->_client.flush();
-	this->_client.stop();
+	this->_socket->flush();
+	this->_socket->stop();
 	delete this->_request;
 	delete this->_response;
-	*/
 }
 
 HttpRequest* HttpContext::request() {

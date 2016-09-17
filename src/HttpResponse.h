@@ -12,15 +12,15 @@ public:
 	~HttpResponse();
 	void setResponseCode(char* code);
 	void addHeader(HttpHeader* header);
+	void addHeader(char* key, char* value);
 	void setBody(char* body);
 	void sendResponse();
-	//void sendFile(WiFiClient client, File f);
 	char* pingResponse();
 private:
 	httpd::sockets::ISocket* _socket;
-	Array<HttpHeader>* m_headers;
-	char* code;
-	char* m_body;
+	Array<HttpHeader>* _headers;
+	char* _code;
+	char* _body;
 	int pinValue;
 	char* retval;
 };

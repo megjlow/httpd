@@ -13,40 +13,29 @@ typedef void (*Callback)(HttpContext*);
 
 class CallbackFunc {
 public:
-	//CallbackFunc(char* url, void(*callback)(HttpContext* context)) {
-	CallbackFunc(char* url, Callback callback) {
-		this->_url = strdup(url);
-		this->_callback = callback;
-	}
-	~CallbackFunc() {
-		free(this->_url);
-	}
-	Callback getCallback() {
-		return this->_callback;
-	}
-	char* url() {
-		return this->_url;
-	}
+	CallbackFunc(char* url, Callback callback, bool wildcard);
+	CallbackFunc(char* url, Callback callback);
+	~CallbackFunc();
+	Callback getCallback();
+	char* url();
+	bool wildcard();
+	bool isMatch(char* url);
 private:
 	char* _url;
 	Callback _callback;
-	//void (*m_callback)(HttpContext* context);
-	//void *(*c)() m_func;
+	bool _wildcard;
 };
 
 class Httpd {
 public:
 	Httpd(httpd::sockets::IServerSocket* server);
-	//Httpd(WiFiServer* server);
 	~Httpd();
 	void handleClient();
-	void sendResponse(HttpResponse* response);
-	//HttpContext* ProcessRequest(WiFiClient client);
-	void RegisterCallback(char* url, Callback callbak);
+	void RegisterCallback(char* url, Callback callback);
+	void RegisterCallback(char* url, Callback callback, bool wildcard);
 	void begin();
 	Array<CallbackFunc>* callbacks();
 private:
-	//WiFiServer* _server;
 	httpd::sockets::IServerSocket* _server;
 	Array<CallbackFunc>* _callbacks;
 };

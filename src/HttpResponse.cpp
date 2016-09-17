@@ -3,54 +3,56 @@
 #include "HttpResponse.h"
 
 HttpResponse::HttpResponse(httpd::sockets::ISocket* socket) {
-	this->code = NULL;
-	this->m_body = NULL;
+	this->_code = NULL;
+	this->_body = NULL;
 	this->retval = NULL;
 	this->_socket = socket;
-	this->m_headers = new Array<HttpHeader>();
+	this->_headers = new Array<HttpHeader>();
 }
 
 HttpResponse::~HttpResponse() {
-	/*
-	if(this->code != NULL) {
-		free(this->code);
+	if(this->_code != NULL) {
+		free(this->_code);
 	}
-	if(this->m_body != NULL) {
-		free(this->m_body);
+	if(this->_body != NULL) {
+		free(this->_body);
 	}
 	if(this->retval != NULL) {
 		delete retval;
 	}
-	delete this->m_headers;
-	*/
+	delete this->_headers;
 }
 
 void HttpResponse::setResponseCode(char* code) {
-	this->code = strdup(code);
+	this->_code = strdup(code);
 }
 
 void HttpResponse::addHeader(HttpHeader* header) {
-	this->m_headers->add(header);
+	this->_headers->add(header);
+}
+
+void HttpResponse::addHeader(char* key, char* value) {
+	HttpHeader *header = new HttpHeader(key, value);
+	this->_headers->add(header);
 }
 
 void HttpResponse::setBody(char* body) {
-	this->m_body = strdup(body);
+	this->_body = strdup(body);
 }
 
 void HttpResponse::sendResponse() {
-	this->_socket->print(this->code);
+	this->_socket->print(this->_code);
 	this->_socket->print("\r\n");
-	if(this->m_headers->count() > 0) {
-		for(int i=0; i<this->m_headers->count(); i++) {
-			HttpHeader* header = this->m_headers->get(i);
-			this->_socket->print(header->key());
-			this->_socket->print(": ");
-			this->_socket->print(header->value());
-		}
+	for(int i=0; i<this->_headers->count(); i++) {
+		HttpHeader* header = this->_headers->get(i);
+		this->_socket->print(header->key());
+		this->_socket->print(": ");
+		this->_socket->print(header->value());
 		this->_socket->print("\r\n");
 	}
 	this->_socket->print("\r\n");
-	this->_socket->print(this->m_body);
+	Serial.print(this->_body);
+	this->_socket->print(this->_body);
 	this->_socket->print("\r\n");
 }
 

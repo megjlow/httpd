@@ -20,6 +20,8 @@ namespace httpd {
 			virtual size_t readBytes( char *buffer, size_t length);
 			virtual size_t print(char);
 			virtual size_t print(const char[]);
+			virtual void flush();
+			virtual void stop();
 		};
 
 #ifdef ESP8266
@@ -30,6 +32,8 @@ namespace httpd {
 			size_t readBytes( char *buffer, size_t length);
 			size_t print(char);
 			size_t print(const char[]);
+			void flush();
+			void stop();
 		private:
 			WiFiClient _client;
 		};
@@ -41,6 +45,8 @@ namespace httpd {
 		size_t readBytes( char *buffer, size_t length);
 		size_t print(char);
 		size_t print(const char[]);
+		void flush();
+		void stop();
 	private:
 		AdafruitTCP _client;
 	};
