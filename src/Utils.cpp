@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include "Utils.h"
+#include "Array.h"
 
 
 Utils::Utils() {
@@ -10,31 +11,38 @@ Utils::~Utils() {
 
 }
 
-Tokens* Utils::tokeniseString(char* input, char* delim) {
-	Tokens* retval = new Tokens();
+
+char* Utils::strdup(char* input) {
+	char* retval = new char[strlen(input) + 1];
+	strcpy(retval, input);
+	retval[strlen(input) + 1] = '\0';
+	return retval;
+}
+
+Array<char>* Utils::tokeniseString(char* input, char* delim) {
+	Array<char>* retval = new Array<char>();
 	char* token = NULL;
 	char* c;
 
 	token = strtok_r(input, delim, &c);
 	while(token != NULL) {
-		retval->addToken(token);
+		retval->add(token);
 		token = strtok_r(NULL, delim, &c);
 	}
 	return retval;
 }
 
-Tokens* Utils::tokeniseHeader(char* header, char* delim) {
-	Tokens* retval = new Tokens();
+Array<char>* Utils::tokeniseHeader(char* header, char* delim) {
+	Array<char>* retval = new Array<char>();
 
 	char* token = NULL;
 	char* c;
 	token = strtok_r(header, delim, &c);
-	retval ->addToken(token);
-	retval->addToken(c);
+	retval->add(token);
+	retval->add(c);
 
 	return retval;
 }
-
 
 void Utils::urlDecode(char *dst, const char *src) {
   char a, b,c;

@@ -1,11 +1,10 @@
 #include "Configuration.h"
 #include <Arduino.h>
-#include <FS.h>
 #include <Utils.h>
-#include <Tokens.h>
 #include <KeyValuePair.h>
 
 Configuration::Configuration(char* fname) {
+	/*
 	this->settings = new KeyValuePair*[10];
 	this->nSettings = 0;
 	File f = SPIFFS.open("/config.txt", "r");
@@ -34,6 +33,7 @@ Configuration::Configuration(char* fname) {
 		delete lines;
 		free(buffer);
 	}
+	*/
 }
 
 Configuration::~Configuration() {

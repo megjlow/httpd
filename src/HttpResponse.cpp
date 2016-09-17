@@ -1,42 +1,57 @@
 #include <Arduino.h>
 
 #include "HttpResponse.h"
-#include "FS.h"
-#include "ESP8266WiFi.h"
 
-HttpResponse::HttpResponse(char* code, int pinValue) {
+HttpResponse::HttpResponse(httpd::sockets::ISocket* socket) {
+	this->code = NULL;
+	this->m_body = NULL;
 	this->retval = NULL;
-	this->code = strdup(code);
-	this->pinValue = pinValue;
+	this->_socket = socket;
+	this->m_headers = new Array<HttpHeader>();
 }
 
 HttpResponse::~HttpResponse() {
-	free(this->code);
+	/*
+	if(this->code != NULL) {
+		free(this->code);
+	}
+	if(this->m_body != NULL) {
+		free(this->m_body);
+	}
 	if(this->retval != NULL) {
 		delete retval;
 	}
+	delete this->m_headers;
+	*/
 }
 
-char* HttpResponse::getResponse() {
-	this->retval = new char[400];
-	memset(this->retval, 0, sizeof(this->retval));
-	//char* retval = new char[200];
-	strcat(this->retval, "HTTP/1.1 ");
-	if(strcmp(this->code, "200") == 0) {
-		strcat(this->retval, "200 OK\r\n");
-		strcat(this->retval, "Content-Type: application/json\r\nAccess-Control-Allow-Origin: *\r\n\r\n{\"value\":\"");
-		char c[2] = {'\0','\0'};
-		c[0] = this->pinValue + '0';
-		strcat(this->retval, c);
-		strcat(this->retval, "\"}");
+void HttpResponse::setResponseCode(char* code) {
+	this->code = strdup(code);
+}
+
+void HttpResponse::addHeader(HttpHeader* header) {
+	this->m_headers->add(header);
+}
+
+void HttpResponse::setBody(char* body) {
+	this->m_body = strdup(body);
+}
+
+void HttpResponse::sendResponse() {
+	this->_socket->print(this->code);
+	this->_socket->print("\r\n");
+	if(this->m_headers->count() > 0) {
+		for(int i=0; i<this->m_headers->count(); i++) {
+			HttpHeader* header = this->m_headers->get(i);
+			this->_socket->print(header->key());
+			this->_socket->print(": ");
+			this->_socket->print(header->value());
+		}
+		this->_socket->print("\r\n");
 	}
-	else if(strcmp(this->code, "404") == 0) {
-		strcat(this->retval, "404 Not Found\r\n");
-		strcat(this->retval, "Content-Type: text/html\r\nAccess-Control-Allow-Origin: *\r\n\r\n");
-		strcat(this->retval, "<html><head><title>Not Found</title></head><body>404 not found</body></html>");
-	}
-	strcat(this->retval, "\0");
-	return this->retval;
+	this->_socket->print("\r\n");
+	this->_socket->print(this->m_body);
+	this->_socket->print("\r\n");
 }
 
 char* HttpResponse::pingResponse() {
@@ -46,6 +61,7 @@ char* HttpResponse::pingResponse() {
 	return this->retval;
 }
 
+/*
 void HttpResponse::sendFile(WiFiClient client, File f) {
 	if(f) {
 		client.print("HTTP/1.1 200 OK\r\n");
@@ -81,4 +97,5 @@ void HttpResponse::sendFile(WiFiClient client, File f) {
 		f.close();
 	}
 }
+*/
 
