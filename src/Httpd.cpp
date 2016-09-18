@@ -60,14 +60,12 @@ void Httpd::handleClient() {
 	if(!socket) {
 		return;
 	}
-	Serial.println("got client");
 	HttpContext* context = new HttpContext(socket);
 	if(context->request()->parseSuccess() == true) {
 		for(int i=0; i<this->_callbacks->count(); i++) {
 			CallbackFunc *callback = this->_callbacks->get(i);
 			callback->isMatch(context->request()->url());
 			if(callback->isMatch(context->request()->url())) {
-				Serial.println("matched callback");
 				(*callback->getCallback())(context);
 			}
 		}

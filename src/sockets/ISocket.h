@@ -24,10 +24,15 @@ namespace httpd {
 			virtual void stop();
 		};
 
-#ifdef ESP8266
+
 		class Socket: public ISocket {
 		public:
-			Socket(WiFiClient client);
+			~Socket();
+			#ifdef ESP8266
+				Socket(WiFiClient client);
+			#elif ARDUINO_STM32_FEATHER
+				Socket(AdafruitTCP client);
+			#endif
 			int available();
 			size_t readBytes( char *buffer, size_t length);
 			size_t print(char);
@@ -35,22 +40,13 @@ namespace httpd {
 			void flush();
 			void stop();
 		private:
-			WiFiClient _client;
+			#ifdef ESP8266
+				WiFiClient _client;
+			#elif ARDUINO_STM32_FEATHER
+				AdafruitTCP _client;
+			#endif
 		};
-#elif ARDUINO_STM32_FEATHER
-	class Socket: public ISocket {
-	public:
-		Socket(AdafruitTCP client);
-		int available();
-		size_t readBytes( char *buffer, size_t length);
-		size_t print(char);
-		size_t print(const char[]);
-		void flush();
-		void stop();
-	private:
-		AdafruitTCP _client;
-	};
-#endif
+
 	}
 }
 

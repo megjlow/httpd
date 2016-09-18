@@ -9,61 +9,41 @@ namespace httpd {
 			Socket::Socket(WiFiClient client) {
 				this->_client = client;
 			}
-
-			int Socket::available() {
-				return _client.available();
-			}
-
-			size_t Socket::readBytes( char *buffer, size_t length) {
-				return _client.readBytes(buffer, length);
-			}
-
-			size_t Socket::print(char c) {
-				return _client.print(c);
-			}
-
-			size_t Socket::print(const char buffer[]) {
-				return _client.print(buffer);
-			}
-
-			void Socket::flush() {
-				_client.flush();
-			}
-
-			void Socket::stop() {
-				_client.stop();
-			}
-
-#elif ARDUINO_STM32_FEATHER
+		#elif ARDUINO_STM32_FEATHER
 			Socket::Socket(AdafruitTCP client) {
 				this->_client = client;
 			}
+		#endif
+
+			Socket::~Socket() {
+				this->_client.~Client();
+			}
 
 			int Socket::available() {
-				return _client.available();
+				Serial.print("available ");
+				Serial.println(this->_client.available());
+				return this->_client.available();
 			}
 
 			size_t Socket::readBytes( char *buffer, size_t length) {
-				return _client.readBytes(buffer, length);
+				return this->_client.readBytes(buffer, length);
 			}
 
 			size_t Socket::print(char c) {
-				return _client.print(c);
+				return this->_client.print(c);
 			}
 
 			size_t Socket::print(const char buffer[]) {
-				return _client.print(buffer);
+				return this->_client.print(buffer);
 			}
 
 			void Socket::flush() {
-				_client.flush();
+				this->_client.flush();
 			}
 
 			void Socket::stop() {
-				_client.stop();
+				this->_client.stop();
 			}
-
-		#endif
 
 	}
 }

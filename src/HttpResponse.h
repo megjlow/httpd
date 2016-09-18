@@ -14,6 +14,7 @@ public:
 	void addHeader(HttpHeader* header);
 	void addHeader(char* key, char* value);
 	void setBody(char* body);
+	void setBody(String body);
 	void sendResponse();
 	char* pingResponse();
 private:

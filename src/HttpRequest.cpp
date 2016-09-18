@@ -92,7 +92,7 @@ int HttpRequest::headerCount() {
 }
 
 HttpHeader* HttpRequest::getHeader(int n) {
-	//return this->headers[n];
+	//return this->_headers[n];
 }
 
 char* HttpRequest::getHeader(char* name) {

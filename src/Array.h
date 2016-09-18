@@ -5,10 +5,7 @@
 
 template <typename T> class Array {
 public:
-	Array() {
-		this->m_Array = new T*[10];
-		this->m_Size = 10;
-		this->m_Count = 0;
+	Array(): Array(10){
 	}
 	Array(int initialSize) {
 		this->m_Array = new T*[initialSize];
@@ -67,7 +64,7 @@ public:
 	Array(): Array(10) {
 	}
 	Array(int initialSize) {
-		this->_array = new KeyValuePair*[10];
+		this->_array = new KeyValuePair*[initialSize];
 		this->_size = 10;
 		this->_count = 0;
 	}
@@ -125,10 +122,7 @@ private:
 template <>
 class Array<char> {
 public:
-	Array() {
-		this->m_Array = new char*[10];
-		this->m_Size = 10;
-		this->m_Count = 0;
+	Array(): Array(10) {
 	}
 	Array(int initialSize) {
 		this->m_Array = new char*[initialSize];

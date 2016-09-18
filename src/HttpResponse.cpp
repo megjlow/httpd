@@ -40,6 +40,11 @@ void HttpResponse::setBody(char* body) {
 	this->_body = strdup(body);
 }
 
+void HttpResponse::setBody(String body) {
+	this->_body = (char*) calloc(body.length() + 1, sizeof(char));
+	body.toCharArray(this->_body, body.length() + 1);
+}
+
 void HttpResponse::sendResponse() {
 	this->_socket->print(this->_code);
 	this->_socket->print("\r\n");
@@ -51,7 +56,6 @@ void HttpResponse::sendResponse() {
 		this->_socket->print("\r\n");
 	}
 	this->_socket->print("\r\n");
-	Serial.print(this->_body);
 	this->_socket->print(this->_body);
 	this->_socket->print("\r\n");
 }
