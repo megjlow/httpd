@@ -11,12 +11,13 @@ HttpRequest::HttpRequest(httpd::sockets::ISocket* socket) {
 	this->_headers = new Array<HttpHeader>();
 	this->_parameters = new Array<KeyValuePair>();
 	this->_parseSuccess = true;
-	char* buffer = new char[2048];
+	char* buffer = new char[512];
 	memset(buffer, 0, sizeof(buffer));
 	delay(10);
 	int bytesavailable = socket->available();
 	if(bytesavailable > 0) {
-		socket->readBytes(buffer, bytesavailable);
+		int read = socket->readBytes(buffer, bytesavailable);
+		buffer[bytesavailable] = '\0';
 		Serial.println("Begin buffer ");
 		Serial.print(buffer);
 		Serial.println("End Buffer");

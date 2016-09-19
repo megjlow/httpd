@@ -58,6 +58,7 @@ void Httpd::begin() {
 void Httpd::handleClient() {
 	httpd::sockets::ISocket* socket = this->_server->available();
 	if(!socket) {
+		delay(10);
 		return;
 	}
 	HttpContext* context = new HttpContext(socket);

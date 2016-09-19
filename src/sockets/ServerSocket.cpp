@@ -5,7 +5,13 @@ namespace httpd {
 	namespace sockets {
 
 		ServerSocket::ServerSocket(int port) {
+#ifdef ESP8266
 			this->_server = new WiFiServer(port);
+#elif ARDUINO_STM32_FEATHER
+			this->_server = new AdafruitTCPServer(port);
+			this->_server->err_actions(true, false);
+#endif
+
 		}
 
 		ServerSocket::~ServerSocket() {
@@ -20,10 +26,12 @@ namespace httpd {
 			ISocket* retval = NULL;
 			#ifdef ESP8266
 				WiFiClient client = this->_server->available();
+				if(client) {
 			#elif ARDUINO_STM32_FEATHER
 				AdafruitTCP client = this->_server->available();
+				if(client.valid()) {
 			#endif
-			if(client) {
+				Serial.println("new client");
 				retval = new Socket(client);
 			}
 			return retval;
