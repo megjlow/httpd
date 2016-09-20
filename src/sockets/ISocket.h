@@ -27,12 +27,12 @@ namespace httpd {
 
 		class Socket: public ISocket {
 		public:
-			~Socket();
 			#ifdef ESP8266
 				Socket(WiFiClient client);
 			#elif ARDUINO_STM32_FEATHER
 				Socket(AdafruitTCP client);
 			#endif
+			virtual ~Socket();
 			int available();
 			size_t readBytes( char *buffer, size_t length);
 			size_t print(char);

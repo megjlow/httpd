@@ -18,27 +18,20 @@ namespace httpd {
 			virtual ISocket* available();
 		};
 
+
+	class ServerSocket: public IServerSocket {
+	public:
+		ServerSocket(int port);
+		virtual ~ServerSocket();
+		void begin();
+		ISocket* available();
+	private:
 #ifdef ESP8266
-	class ServerSocket: public IServerSocket {
-	public:
-		ServerSocket(int port);
-		~ServerSocket();
-		void begin();
-		ISocket* available();
-	private:
 		WiFiServer* _server;
-	};
 #elif ARDUINO_STM32_FEATHER
-	class ServerSocket: public IServerSocket {
-	public:
-		ServerSocket(int port);
-		~ServerSocket();
-		void begin();
-		ISocket* available();
-	private:
 		AdafruitTCPServer* _server;
-	};
 #endif
+	};
 	}
 }
 

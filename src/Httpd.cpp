@@ -6,6 +6,7 @@
 #include "HttpRequest.h"
 #include "HttpResponse.h"
 #include "Array.h"
+#include "Utils.h"
 
 
 CallbackFunc::CallbackFunc(char* url, Callback callback, bool wildcard) {
@@ -61,6 +62,8 @@ void Httpd::handleClient() {
 		delay(10);
 		return;
 	}
+	Serial.print("START  ");
+	Utils::printFreeHeap();
 	HttpContext* context = new HttpContext(socket);
 	if(context->request()->parseSuccess() == true) {
 		for(int i=0; i<this->_callbacks->count(); i++) {
@@ -75,6 +78,8 @@ void Httpd::handleClient() {
 	context->response()->sendResponse();
 	}
 	delete context;
+	Serial.print("END    ");
+	Utils::printFreeHeap();
 }
 
 Array<CallbackFunc>* Httpd::callbacks() {
@@ -89,6 +94,7 @@ void Httpd::RegisterCallback(char* url, void(*callback)(HttpContext* context), b
 void Httpd::RegisterCallback(char* url, void(*callback)(HttpContext* context)) {
 	this->RegisterCallback(url, callback, false);
 }
+
 
 
 

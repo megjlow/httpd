@@ -2,6 +2,10 @@
 #include "Utils.h"
 #include "Array.h"
 
+#ifdef ARDUINO_STM32_FEATHER
+#include <adafruit_feather.h>
+#endif
+
 
 Utils::Utils() {
 
@@ -73,4 +77,12 @@ void Utils::urlDecode(char *dst, const char *src) {
     }
   }
   *dst++ = '\0';
+}
+
+void Utils::printFreeHeap() {
+#ifdef ARDUINO_STM32_FEATHER
+	Serial.println(Feather.dbgHeapFree());
+#elif ESP8266
+	Serial.println(ESP.getFreeHeap());
+#endif
 }

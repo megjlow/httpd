@@ -16,12 +16,13 @@ namespace httpd {
 		#endif
 
 			Socket::~Socket() {
+				Serial.println("Socket::~Socket");
+				this->_client.flush();
+				this->_client.stop();
 				this->_client.~Client();
 			}
 
 			int Socket::available() {
-				Serial.print("available ");
-				Serial.println(this->_client.available());
 				return this->_client.available();
 			}
 
