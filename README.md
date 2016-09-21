@@ -1,1 +1,1 @@
-# httpd readme
+Simple webserver, processes rest requests from tiles.
