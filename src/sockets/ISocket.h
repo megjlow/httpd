@@ -32,7 +32,7 @@ namespace httpd {
 			#elif ARDUINO_STM32_FEATHER
 				Socket(AdafruitTCP client);
 			#endif
-			virtual ~Socket();
+			~Socket();
 			int available();
 			size_t readBytes( char *buffer, size_t length);
 			size_t print(char);
@@ -49,3 +49,5 @@ namespace httpd {
 
 	}
 }
+
+#endif
