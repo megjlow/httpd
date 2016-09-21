@@ -1,5 +1,5 @@
-#include <sockets/IServerSocket.h>
-#include <sockets/ISocket.h>
+#include <sockets/ServerSocket.h>
+#include <sockets/Socket.h>
 
 namespace httpd {
 	namespace sockets {
@@ -22,8 +22,8 @@ namespace httpd {
 			this->_server->begin();
 		}
 
-		ISocket* ServerSocket::available() {
-			ISocket* retval = NULL;
+		Socket* ServerSocket::available() {
+			Socket* retval = NULL;
 			#ifdef ESP8266
 				WiFiClient client = this->_server->available();
 				if(client) {

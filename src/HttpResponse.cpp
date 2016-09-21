@@ -2,7 +2,7 @@
 
 #include "HttpResponse.h"
 
-HttpResponse::HttpResponse(httpd::sockets::ISocket* socket) {
+HttpResponse::HttpResponse(httpd::sockets::Socket* socket) {
 	this->_code = NULL;
 	this->_body = NULL;
 	this->retval = NULL;

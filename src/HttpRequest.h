@@ -5,11 +5,11 @@
 #include <HttpHeader.h>
 #include <KeyValuePair.h>
 #include <Array.h>
-#include <sockets/ISocket.h>
+#include <sockets/Socket.h>
 
 class HttpRequest {
 public: 
-	HttpRequest(httpd::sockets::ISocket* client);
+	HttpRequest(httpd::sockets::Socket* client);
 	~HttpRequest();
 	int headerCount();
 	char* getHeader(char* name);

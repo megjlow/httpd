@@ -2,8 +2,8 @@
 #define httpd_h
 
 #include <Arduino.h>
-#include <sockets/ISocket.h>
-#include <sockets/IServerSocket.h>
+#include <sockets/Socket.h>
+#include <sockets/ServerSocket.h>
 #include <HttpContext.h>
 #include <HttpRequest.h>
 #include <HttpResponse.h>
@@ -28,7 +28,7 @@ private:
 
 class Httpd {
 public:
-	Httpd(httpd::sockets::IServerSocket* server);
+	Httpd(httpd::sockets::ServerSocket* server);
 	~Httpd();
 	void handleClient();
 	void RegisterCallback(char* url, Callback callback);
@@ -36,7 +36,7 @@ public:
 	void begin();
 	Array<CallbackFunc>* callbacks();
 private:
-	httpd::sockets::IServerSocket* _server;
+	httpd::sockets::ServerSocket* _server;
 	Array<CallbackFunc>* _callbacks;
 };
 

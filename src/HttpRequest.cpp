@@ -1,11 +1,11 @@
 #include "HttpRequest.h"
 
 #include <Arduino.h>
-#include <sockets/ISocket.h>
+#include <sockets/Socket.h>
 #include <HttpHeader.h>
 #include <Utils.h>
 
-HttpRequest::HttpRequest(httpd::sockets::ISocket* socket) {
+HttpRequest::HttpRequest(httpd::sockets::Socket* socket) {
 	this->_url = NULL;
 	this->_method = NULL;
 	this->_headers = new Array<HttpHeader>();

@@ -1,7 +1,7 @@
 #ifndef isocket_h
 #define isocket_h
 
-#include <sockets/ISocket.h>
+#include <sockets/Socket.h>
 
 #ifdef ESP8266
 #include <ESP8266WiFi.h>
@@ -14,24 +14,13 @@ namespace httpd {
 
 	namespace sockets {
 
-		class ISocket {
+		class Socket {
 		public:
-			virtual int available();
-			virtual size_t readBytes( char *buffer, size_t length);
-			virtual size_t print(char);
-			virtual size_t print(const char[]);
-			virtual void flush();
-			virtual void stop();
-		};
-
-
-		class Socket: public ISocket {
-		public:
-			#ifdef ESP8266
+#ifdef ESP8266
 				Socket(WiFiClient client);
-			#elif ARDUINO_STM32_FEATHER
+#elif ARDUINO_STM32_FEATHER
 				Socket(AdafruitTCP client);
-			#endif
+#endif
 			~Socket();
 			int available();
 			size_t readBytes( char *buffer, size_t length);
@@ -40,11 +29,11 @@ namespace httpd {
 			void flush();
 			void stop();
 		private:
-			#ifdef ESP8266
+#ifdef ESP8266
 				WiFiClient _client;
-			#elif ARDUINO_STM32_FEATHER
+#elif ARDUINO_STM32_FEATHER
 				AdafruitTCP _client;
-			#endif
+#endif
 		};
 
 	}

@@ -1,4 +1,4 @@
-#include <sockets/ISocket.h>
+#include <sockets/Socket.h>
 
 
 namespace httpd {
@@ -16,7 +16,6 @@ namespace httpd {
 		#endif
 
 			Socket::~Socket() {
-				Serial.println("Socket::~Socket");
 				this->_client.flush();
 				this->_client.stop();
 				this->_client.~Client();

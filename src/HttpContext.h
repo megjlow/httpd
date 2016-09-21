@@ -7,16 +7,16 @@
 
 #include <HttpRequest.h>
 #include <HttpResponse.h>
-#include <sockets/ISocket.h>
+#include <sockets/Socket.h>
 
 class HttpContext {
 public:
-	HttpContext(httpd::sockets::ISocket* client);
+	HttpContext(httpd::sockets::Socket* client);
 	~HttpContext();
 	HttpRequest* request();
 	HttpResponse* response();
 private:
-	httpd::sockets::ISocket* _socket;
+	httpd::sockets::Socket* _socket;
 	HttpRequest* _request;
 	HttpResponse* _response;
 	char* method;

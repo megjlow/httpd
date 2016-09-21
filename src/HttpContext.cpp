@@ -4,7 +4,7 @@
 #include "HttpRequest.h"
 #include "HttpResponse.h"
 
-HttpContext::HttpContext(httpd::sockets::ISocket* socket) {
+HttpContext::HttpContext(httpd::sockets::Socket* socket) {
 	this->_socket = socket;
 	this->_request = new HttpRequest(socket);
 	this->_response = new HttpResponse(socket);

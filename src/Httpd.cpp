@@ -1,6 +1,6 @@
 #include <Arduino.h>
-#include <sockets/ISocket.h>
-#include <sockets/IServerSocket.h>
+#include <sockets/Socket.h>
+#include <sockets/ServerSocket.h>
 #include "Httpd.h"
 #include "HttpContext.h"
 #include "HttpRequest.h"
@@ -43,7 +43,7 @@ bool CallbackFunc::isMatch(char* url) {
 }
 
 
-Httpd::Httpd(httpd::sockets::IServerSocket* server) {
+Httpd::Httpd(httpd::sockets::ServerSocket* server) {
 	this->_callbacks = new Array<CallbackFunc>();
 	this->_server = server;
 }
@@ -57,7 +57,7 @@ void Httpd::begin() {
 }
 
 void Httpd::handleClient() {
-	httpd::sockets::ISocket* socket = this->_server->available();
+	httpd::sockets::Socket* socket = this->_server->available();
 	if(!socket) {
 		delay(10);
 		return;
