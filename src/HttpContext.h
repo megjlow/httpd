@@ -9,9 +9,11 @@
 #include <HttpResponse.h>
 #include <sockets/Socket.h>
 
+using namespace httpd::sockets;
+
 class HttpContext {
 public:
-	HttpContext(httpd::sockets::Socket* client);
+	HttpContext(Socket* client);
 	~HttpContext();
 	HttpRequest* request();
 	HttpResponse* response();

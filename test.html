@@ -4,29 +4,31 @@
     <script type='text/javascript'>
     
       $(document).ready(function() {
-      
-      /*
-        $.ajax({
-          type: 'GET',
-          url: 'http://192.168.10.118/gpio2',
-          success: function(response) {
-            if(response.value == '1') {
-                $('#state').text('OFF');
-              }
-              else {
-                $('#state').text('ON');
-              }
-          }
+        
+        var connection;
+        
+        $('#connectsocket').on('click', function(e) {
+        	e.preventDefault();
+        	var ip = $('#ipaddress').val();
+        	connection = new WebSocket('ws://' + ip + '/', ['arduino']);
+        	
+        	connection.onopen = function () {
+			connection.send('Message from Browser to ESP8266 yay its Working!! ' + new Date()); 
+			connection.send('ping');
+		};
+		
+		connection.onerror = function (error) {
+			console.log('WebSocket Error ', error);
+		};
+
+		connection.onmessage = function (e) {
+			console.log('Server: ', e.data);
+			connection.send('Time: ' + new Date()); 
+		};
         });
         
-        $.ajax({
-          type: 'GET',
-          url: 'http://192.168.10.118/gpio4',
-          success: function(response) {
-                $('#powerstate').text(response.value);
-          }
-        });
-        */
+        //var connection = new WebSocket('ws://10.11.2.1:81/', ['arduino']);
+
         
         $('.on').on('click', function(e) {
           e.preventDefault();
@@ -100,6 +102,7 @@
   <body>
   	<label for="ipaddress">IPAddress</label>
   	<input type="text" id="ipaddress" /><br /><br />
+  	<a href="javascript:void(0);" id="connectsocket">Connect socket</a>
   	<div class="pin">
   		Pin 2 <a href="javascript:void(0);" class="on" data-pin="2">ON</a> <a href="javascript:void(0);" class="off" data-pin="2">OFF</a> <label class="state" data-pin="2">OFF</label> Pin 2 is reversed on some boards
   	</div>

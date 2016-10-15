@@ -4,16 +4,14 @@
 namespace httpd {
 	namespace sockets {
 
-		#ifdef ESP8266
-
+#ifdef ESP8266
 			Socket::Socket(WiFiClient client) {
+#elif ARDUINO_STM32_FEATHER
+				Socket::Socket(AdafruitTCP client) {
+#endif
 				this->_client = client;
+				this->_isWebSocket = false;
 			}
-		#elif ARDUINO_STM32_FEATHER
-			Socket::Socket(AdafruitTCP client) {
-				this->_client = client;
-			}
-		#endif
 
 			Socket::~Socket() {
 				this->_client.flush();
@@ -23,6 +21,10 @@ namespace httpd {
 
 			int Socket::available() {
 				return this->_client.available();
+			}
+
+			uint8_t Socket::connected() {
+				return this->_client.connected();
 			}
 
 			size_t Socket::readBytes( char *buffer, size_t length) {
@@ -43,6 +45,14 @@ namespace httpd {
 
 			void Socket::stop() {
 				this->_client.stop();
+			}
+
+			bool Socket::isWebSocket() {
+				return this->_isWebSocket;
+			}
+
+			void Socket::setWebSocket() {
+				this->_isWebSocket = true;
 			}
 
 	}

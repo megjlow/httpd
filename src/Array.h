@@ -125,45 +125,45 @@ public:
 	Array(): Array(10) {
 	}
 	Array(int initialSize) {
-		this->m_Array = new char*[initialSize];
-		this->m_Size = initialSize;
-		this->m_Count = 0;
+		this->_array = new char*[initialSize];
+		this->_size = initialSize;
+		this->_count = 0;
 	}
 	~Array() {
-		for(int i=0; i<this->m_Count; i++) {
-			free(this->m_Array[i]);
+		for(int i=0; i<this->_count; i++) {
+			free(this->_array[i]);
 		}
-		delete[] this->m_Array;
+		delete[] this->_array;
 	}
 	void add(char* element) {
-		if(this->m_Count >= this->m_Size) {
+		if(this->_count >= this->_size) {
 			// resize the array, assign a new bigger array and copy the elements into it
-			char** newArray = new char*[this->m_Size + 10];
-			this->m_Size = this->m_Size + 10;
-			for(int i=0; i<m_Count; i++) {
-				newArray[i] = this->m_Array[i];
-				this->m_Array[i] = NULL;
+			char** newArray = new char*[this->_size + 10];
+			this->_size = this->_size + 10;
+			for(int i=0; i<_count; i++) {
+				newArray[i] = this->_array[i];
+				this->_array[i] = NULL;
 			}
-			delete this->m_Array;
-			this->m_Array = newArray;
+			delete this->_array;
+			this->_array = newArray;
 		}
-		this->m_Array[m_Count] = strdup(element);
-		this->m_Count++;
+		this->_array[_count] = strdup(element);
+		this->_count++;
 	}
 	char* get(int idx) {
 		char* retval = NULL;
-		if(idx <= this->m_Count) {
-			retval = this->m_Array[idx];
+		if(idx <= this->_count) {
+			retval = this->_array[idx];
 		}
 		return retval;
 	}
 	int count() {
-		return this->m_Count;
+		return this->_count;
 	}
 private:
-	int m_Size; // size of array
-	int m_Count;// number of elements in array
-	char** m_Array;// the array
+	int _size; // size of array
+	int _count;// number of elements in array
+	char** _array;// the array
 };
 
 

@@ -23,17 +23,21 @@ namespace httpd {
 #endif
 			~Socket();
 			int available();
+			uint8_t connected();
 			size_t readBytes( char *buffer, size_t length);
 			size_t print(char);
 			size_t print(const char[]);
 			void flush();
 			void stop();
+			void setWebSocket();
+			bool isWebSocket();
 		private:
 #ifdef ESP8266
 				WiFiClient _client;
 #elif ARDUINO_STM32_FEATHER
 				AdafruitTCP _client;
 #endif
+			bool _isWebSocket;
 		};
 
 	}

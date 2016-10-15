@@ -2,52 +2,48 @@
 #include <Arduino.h>
 #include <Utils.h>
 #include <KeyValuePair.h>
+#include <FS.h>
 
 Configuration::Configuration(char* fname) {
-	/*
-	this->settings = new KeyValuePair*[10];
-	this->nSettings = 0;
+	this->_settings = new Array<KeyValuePair>();
 	File f = SPIFFS.open("/config.txt", "r");
 	if(!f) {
 		Serial.print("Configuration: failed to open configuration file - ");
 		Serial.println(fname);
 	}
 	else {
-		Utils* utils = new Utils();
 		char* buffer = (char*) calloc(1024, sizeof(char));
 		f.readBytes(buffer, f.size());
-		Tokens* lines = utils->tokeniseString(buffer, "\r\n");
+		Array<char>* lines = Utils::tokeniseString(buffer, "\r\n");
 		for(int i=0; i<lines->count(); i++) {
-			if(strcmp(lines->getToken(i), "") != 0) {
-				Tokens* setting = utils->tokeniseString(lines->getToken(i), "=");
+			if(strcmp(lines->get(i), "") != 0) {
+				Array<char>* setting = Utils::tokeniseString(lines->get(i), "=");
 				if(setting->count() >= 2) {
-					KeyValuePair* s = new KeyValuePair(setting->getToken(0), setting->getToken(1));
-					this->settings[this->nSettings] = s;
-					this->nSettings++;
+					KeyValuePair* s = new KeyValuePair(setting->get(0), setting->get(1));
+					this->_settings->add(s);
 				}
 				delete setting;
 			}
 		}
 
-		delete utils;
 		delete lines;
 		free(buffer);
 	}
-	*/
 }
 
 Configuration::~Configuration() {
-	for(int i=0; i<this->nSettings; i++) {
-		delete this->settings[i];
-	}
-	delete[] this->settings;
+	delete this->_settings;
 }
 
-char* Configuration::getConfigurationSetting(char* name) {
+int Configuration::countSettings() {
+	return this->_settings->count();
+}
+
+char* Configuration::get(char* name) {
 	char* retval = NULL;
-	for(int i=0; i<this->nSettings; i++) {
-		if(strcmp(this->settings[i]->key(), name) == 0) {
-			retval = this->settings[i]->value();
+	for(int i=0; i<this->_settings->count(); i++) {
+		if(strcmp(this->_settings->get(i)->key(), name) == 0) {
+			retval = this->_settings->get(i)->value();
 			break;
 		}
 	}

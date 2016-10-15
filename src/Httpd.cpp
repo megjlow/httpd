@@ -8,6 +8,8 @@
 #include "Array.h"
 #include "Utils.h"
 
+using namespace httpd::sockets;
+
 
 CallbackFunc::CallbackFunc(char* url, Callback callback, bool wildcard) {
 	this->_url = strdup(url);
@@ -43,9 +45,11 @@ bool CallbackFunc::isMatch(char* url) {
 }
 
 
-Httpd::Httpd(httpd::sockets::ServerSocket* server) {
+Httpd::Httpd(ServerSocket* server) {
 	this->_callbacks = new Array<CallbackFunc>();
 	this->_server = server;
+	this->_webSockets = new Array<Socket>();
+	this->_socketServer = new WebSocketServer();
 }
 
 Httpd::~Httpd() {
@@ -57,25 +61,32 @@ void Httpd::begin() {
 }
 
 void Httpd::handleClient() {
-	httpd::sockets::Socket* socket = this->_server->available();
+	Socket* socket = this->_server->available();
 	if(!socket) {
 		delay(10);
 		return;
 	}
+	this->_webSockets->add(socket);
 	Serial.print("START  ");
 	Utils::printFreeHeap();
 	HttpContext* context = new HttpContext(socket);
 	if(context->request()->parseSuccess() == true) {
-		for(int i=0; i<this->_callbacks->count(); i++) {
-			CallbackFunc *callback = this->_callbacks->get(i);
-			callback->isMatch(context->request()->url());
-			if(callback->isMatch(context->request()->url())) {
-				(*callback->getCallback())(context);
-			}
+		// check if it's a request to upgrade to a websocket, if it is then hand it off to the websocket server
+		if(context->request()->getHeader("Upgrade") != NULL && strcmp(context->request()->getHeader("Upgrade"), "websocket") == 0) {
+			this->_socketServer->add(context, socket);
 		}
-
-	// now we've run the callback and it has done whatever it needs to do output the result
-	context->response()->sendResponse();
+		else {
+			for(int i=0; i<this->_callbacks->count(); i++) {
+				CallbackFunc *callback = this->_callbacks->get(i);
+				callback->isMatch(context->request()->url());
+				if(callback->isMatch(context->request()->url())) {
+					(*callback->getCallback())(context);
+					break;
+				}
+			}
+			// now we've run the callback and it has done whatever it needs to do output the result
+			context->response()->sendResponse();
+		}
 	}
 	delete context;
 	Serial.print("END    ");

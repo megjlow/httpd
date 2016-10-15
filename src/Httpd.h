@@ -4,10 +4,13 @@
 #include <Arduino.h>
 #include <sockets/Socket.h>
 #include <sockets/ServerSocket.h>
+#include <sockets/WebSocketServer.h>
 #include <HttpContext.h>
 #include <HttpRequest.h>
 #include <HttpResponse.h>
 #include <Array.h>
+
+using namespace httpd::sockets;
 
 typedef void (*Callback)(HttpContext*);
 
@@ -36,8 +39,10 @@ public:
 	void begin();
 	Array<CallbackFunc>* callbacks();
 private:
-	httpd::sockets::ServerSocket* _server;
+	ServerSocket* _server;
 	Array<CallbackFunc>* _callbacks;
+	Array<Socket>* _webSockets;
+	WebSocketServer* _socketServer;
 };
 
 #endif

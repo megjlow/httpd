@@ -5,22 +5,20 @@
 #include <HttpHeader.h>
 #include <Utils.h>
 
-HttpRequest::HttpRequest(httpd::sockets::Socket* socket) {
+using namespace httpd::sockets;
+
+HttpRequest::HttpRequest(Socket* socket) {
 	this->_url = NULL;
 	this->_method = NULL;
 	this->_headers = new Array<HttpHeader>();
 	this->_parameters = new Array<KeyValuePair>();
 	this->_parseSuccess = true;
-	char* buffer = new char[512];
-	memset(buffer, 0, sizeof(buffer));
+	char* buffer = new char[1024];
 	delay(10);
 	int bytesavailable = socket->available();
 	if(bytesavailable > 0) {
 		int read = socket->readBytes(buffer, bytesavailable);
 		buffer[bytesavailable] = '\0';
-		Serial.println("Begin buffer ");
-		Serial.print(buffer);
-		Serial.println("End Buffer");
 		ParseRequest(buffer);
 	}
 	else {
@@ -28,6 +26,7 @@ HttpRequest::HttpRequest(httpd::sockets::Socket* socket) {
 		Serial.println("XXXXXXXXXXXXXXXXXXX  Empty Request XXXXXXXXXXXXXXXXXXXXXX");
 	}
 	delete buffer;
+	delay(1);
 }
 
 HttpRequest::~HttpRequest() {
@@ -51,7 +50,7 @@ void HttpRequest::parseMethod(char* header) {
 }
 
 void HttpRequest::parseHeader(char* header) {
-	Array<char>* tokens = Utils::tokeniseString(header, ":");
+	Array<char>* tokens = Utils::tokeniseString(header, ": ");
 	if(tokens->count() == 2) {
 		HttpHeader* h = new HttpHeader(tokens->get(0), tokens->get(1));
 		this->_headers->add(h);
@@ -73,7 +72,7 @@ void HttpRequest::ParseRequest(char* request) {
 			else { // else it has to be request parameters?
 				Array<char>* t = Utils::tokeniseString(headers->get(i), "&");
 				for(int j=0; j<t->count(); j++) {
-					Array<char>* pair = Utils::tokeniseString(t->get(j), "&");
+					Array<char>* pair = Utils::tokeniseString(t->get(j), "=");
 					if(pair->count() == 2) {
 						KeyValuePair* kvp = new KeyValuePair(pair->get(0), pair->get(1));
 						this->_parameters->add(kvp);

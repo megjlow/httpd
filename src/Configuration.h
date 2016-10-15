@@ -2,17 +2,17 @@
 #define config_h
 
 #include <Arduino.h>
-#include "KeyValuePair.h"
-
+#include <KeyValuePair.h>
+#include <Array.h>
 
 class Configuration {
 public:
 	Configuration(char* fname);
 	~Configuration();
-	char* getConfigurationSetting(char* name);
+	char* get(char* name);
+	int countSettings();
 private:
-	KeyValuePair** settings;
-	int nSettings;
+	Array<KeyValuePair>* _settings;
 };
 
 #endif
