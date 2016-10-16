@@ -42,7 +42,7 @@ void HttpResponse::setBody(char* body) {
 
 void HttpResponse::setBody(String body) {
 	this->_body = (char*) calloc(body.length() + 1, sizeof(char));
-	body.toCharArray(this->_body, body.length());
+	body.toCharArray(this->_body, body.length() + 1);
 }
 
 void HttpResponse::sendResponse() {
