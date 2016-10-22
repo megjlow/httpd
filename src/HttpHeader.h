@@ -6,13 +6,14 @@
 class HttpHeader {
 public:
 	HttpHeader(char *key, char* value);
+	HttpHeader(HttpHeader* header);
 	~HttpHeader();
 	char* key();
 	char* value();
 	char* toString();
 private:
-	char* m_Key;
-	char* m_Value;
+	char* _key;
+	char* _value;
 };
 
 #endif

@@ -27,6 +27,7 @@ namespace httpd {
 			size_t readBytes( char *buffer, size_t length);
 			size_t print(char);
 			size_t print(const char[]);
+			size_t write(const uint8_t *buf, size_t size);
 			void flush();
 			void stop();
 			void setWebSocket();

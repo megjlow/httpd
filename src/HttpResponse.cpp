@@ -67,28 +67,28 @@ char* HttpResponse::pingResponse() {
 	return this->retval;
 }
 
-/*
-void HttpResponse::sendFile(WiFiClient client, File f) {
+
+void HttpResponse::sendFile(File f) {
 	if(f) {
-		client.print("HTTP/1.1 200 OK\r\n");
+		this->_socket->print("HTTP/1.1 200 OK\r\n");
 		String fname = f.name();
 		if(fname.endsWith(".html") || fname.endsWith(".htm")) {
-			client.print("Content-Type: text/html\r\n");
+			this->_socket->print("Content-Type: text/html\r\n");
 		}
 		else if(fname.endsWith(".css")) {
-			client.print("Content-Type: text/css\r\n");
+			this->_socket->print("Content-Type: text/css\r\n");
 		}
 		else if(fname.endsWith(".jpg") || fname.endsWith(".jpeg")) {
-			client.print("Content-Type: image/jpeg\r\n");
+			this->_socket->print("Content-Type: image/jpeg\r\n");
 		}
 		else if(fname.endsWith(".js")) {
-			client.print("Content-Type: application/javascript\r\n");
+			this->_socket->print("Content-Type: application/javascript\r\n");
 		}
 		else {
-			client.print("Content-Type: application/octet-stream\r\n");
+			this->_socket->print("Content-Type: application/octet-stream\r\n");
 		}
-		client.print("Access-Control-Allow-Origin: *\r\n\r\n");
-		char outbuff[256];
+		this->_socket->print("Access-Control-Allow-Origin: *\r\n\r\n");
+		char outbuff[512];
 		int available = 0;
 		size_t read = 0;
 		while((available = f.available()) > 0) {
@@ -98,10 +98,12 @@ void HttpResponse::sendFile(WiFiClient client, File f) {
 			else {
 				read = f.readBytes((char*)outbuff, available);
 			}
-			client.write((char*)outbuff, read);
+			this->_socket->write((uint8_t*)outbuff, read);
+			delay(1);
 		}
 		f.close();
 	}
 }
-*/
+
+
 

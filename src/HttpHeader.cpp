@@ -3,21 +3,26 @@
 #include "HttpHeader.h"
 
 HttpHeader::HttpHeader(char* key, char* value) {
-	this->m_Key = strdup(key);
-	this->m_Value = strdup(value);
+	this->_key = strdup(key);
+	this->_value = strdup(value);
+}
+
+HttpHeader::HttpHeader(HttpHeader* header) {
+	this->_key = strdup(header->key());
+	this->_value = strdup(header->value());
 }
 
 HttpHeader::~HttpHeader() {
-	free(this->m_Key);
-	free(this->m_Value);
+	free(this->_key);
+	free(this->_value);
 }
 
 char* HttpHeader::key() {
-	return this->m_Key;
+	return this->_key;
 }
 
 char* HttpHeader::value() {
-	return this->m_Value;
+	return this->_value;
 }
 
 char* HttpHeader::toString() {

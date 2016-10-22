@@ -5,6 +5,7 @@
 #include <sockets/Socket.h>
 #include <HttpHeader.h>
 #include <Array.h>
+#include <FS.h>
 
 class HttpResponse{
 public:
@@ -17,6 +18,7 @@ public:
 	void setBody(String body);
 	void sendResponse();
 	char* pingResponse();
+	void sendFile(File f);
 private:
 	httpd::sockets::Socket* _socket;
 	Array<HttpHeader>* _headers;

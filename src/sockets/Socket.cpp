@@ -39,6 +39,10 @@ namespace httpd {
 				return this->_client.print(buffer);
 			}
 
+			size_t Socket::write(const uint8_t *buf, size_t size) {
+				return this->_client.write(buf, size);
+			}
+
 			void Socket::flush() {
 				this->_client.flush();
 			}

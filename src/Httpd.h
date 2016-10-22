@@ -36,12 +36,14 @@ public:
 	void handleClient();
 	void RegisterCallback(char* url, Callback callback);
 	void RegisterCallback(char* url, Callback callback, bool wildcard);
+	void addGlobalHeader(char* header, char* value);
 	void begin();
 	Array<CallbackFunc>* callbacks();
 private:
 	ServerSocket* _server;
 	Array<CallbackFunc>* _callbacks;
 	Array<Socket>* _webSockets;
+	Array<HttpHeader>* _globalHeaders;
 	WebSocketServer* _socketServer;
 };
 

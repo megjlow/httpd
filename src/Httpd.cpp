@@ -38,7 +38,9 @@ bool CallbackFunc::isMatch(char* url) {
 	if(this->_wildcard && strncmp(this->_url, url, strlen(this->_url)) == 0) {
 		retval = true;
 	}
-	else if(strcmp(this->_url, url) == 0) {
+	//int strncmp(const char *s1, const char *s2, size_t n);
+	else if(strncmp(this->_url, url, sizeof(this->_url)) == 0) {
+	//else if(strcmp(this->_url, url) == 0) {
 		retval = true;
 	}
 	return retval;
@@ -48,6 +50,7 @@ bool CallbackFunc::isMatch(char* url) {
 Httpd::Httpd(ServerSocket* server) {
 	this->_callbacks = new Array<CallbackFunc>();
 	this->_server = server;
+	this->_globalHeaders = new Array<HttpHeader>();
 	this->_webSockets = new Array<Socket>();
 	this->_socketServer = new WebSocketServer();
 }
@@ -70,6 +73,9 @@ void Httpd::handleClient() {
 	Serial.print("START  ");
 	Utils::printFreeHeap();
 	HttpContext* context = new HttpContext(socket);
+	for(int i=0; i<this->_globalHeaders->count(); i++) {
+		context->response()->addHeader(new HttpHeader(this->_globalHeaders->get(i)));
+	}
 	if(context->request()->parseSuccess() == true) {
 		// check if it's a request to upgrade to a websocket, if it is then hand it off to the websocket server
 		if(context->request()->getHeader("Upgrade") != NULL && strcmp(context->request()->getHeader("Upgrade"), "websocket") == 0) {
@@ -95,6 +101,10 @@ void Httpd::handleClient() {
 
 Array<CallbackFunc>* Httpd::callbacks() {
 	return this->_callbacks;
+}
+
+void Httpd::addGlobalHeader(char* header, char* value) {
+	this->_globalHeaders->add(new HttpHeader(header, value));
 }
 
 void Httpd::RegisterCallback(char* url, void(*callback)(HttpContext* context), bool wildcard) {
