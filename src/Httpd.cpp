@@ -69,10 +69,12 @@ void Httpd::handleClient() {
 		delay(10);
 		return;
 	}
-	this->_webSockets->add(socket);
+	//this->_webSockets->add(socket);
+	int startTime = millis();
 	Serial.print("START  ");
-	Utils::printFreeHeap();
+	Utils::printFreeHeap(); Serial.println();
 	HttpContext* context = new HttpContext(socket);
+	socket->setNoDelay(false);
 	for(int i=0; i<this->_globalHeaders->count(); i++) {
 		context->response()->addHeader(new HttpHeader(this->_globalHeaders->get(i)));
 	}
@@ -95,8 +97,12 @@ void Httpd::handleClient() {
 		}
 	}
 	delete context;
+
+	int endTime = millis();
 	Serial.print("END    ");
 	Utils::printFreeHeap();
+	Serial.print(" elapsed: "); Serial.print(endTime - startTime); Serial.println("");
+
 }
 
 Array<CallbackFunc>* Httpd::callbacks() {

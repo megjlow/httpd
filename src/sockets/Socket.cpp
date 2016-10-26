@@ -43,6 +43,10 @@ namespace httpd {
 				return this->_client.write(buf, size);
 			}
 
+			void Socket::setNoDelay(bool noDelay) {
+				this->_client.setNoDelay(noDelay);
+			}
+
 			void Socket::flush() {
 				this->_client.flush();
 			}

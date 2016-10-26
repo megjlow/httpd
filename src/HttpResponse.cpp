@@ -46,8 +46,26 @@ void HttpResponse::setBody(String body) {
 }
 
 void HttpResponse::sendResponse() {
-	this->_socket->print(this->_code);
-	this->_socket->print("\r\n");
+	char* outBuf = new char[1024];
+	memset(outBuf, '\0', sizeof(outBuf));
+	strcat(outBuf, this->_code);
+	strcat(outBuf, "\r\n");
+	for(int i=0; i<this->_headers->count(); i++) {
+		HttpHeader* header = this->_headers->get(i);
+		strcat(outBuf, header->key());
+		strcat(outBuf, ": ");
+		strcat(outBuf, header->value());
+		strcat(outBuf, "\r\n");
+	}
+	strcat(outBuf, "\r\n");
+	strcat(outBuf, this->_body);
+	strcat(outBuf, "\r\n");
+	//this->_socket->print(outBuf);
+	this->_socket->write((uint8_t*)outBuf, strlen(outBuf));
+	delete outBuf;
+	//this->_socket->print(this->_code);
+	//this->_socket->print("\r\n");
+	/*
 	for(int i=0; i<this->_headers->count(); i++) {
 		HttpHeader* header = this->_headers->get(i);
 		this->_socket->print(header->key());
@@ -56,8 +74,9 @@ void HttpResponse::sendResponse() {
 		this->_socket->print("\r\n");
 	}
 	this->_socket->print("\r\n");
-	this->_socket->print(this->_body);
-	this->_socket->print("\r\n");
+	*/
+	//this->_socket->print(this->_body);
+	//this->_socket->print("\r\n");
 }
 
 char* HttpResponse::pingResponse() {
