@@ -14,6 +14,7 @@ namespace httpd {
 			}
 
 			Socket::~Socket() {
+				Serial.println("Socket destructor");
 				this->_client.flush();
 				this->_client.stop();
 				this->_client.~Client();
@@ -43,16 +44,24 @@ namespace httpd {
 				return this->_client.write(buf, size);
 			}
 
-			void Socket::setNoDelay(bool noDelay) {
-				this->_client.setNoDelay(noDelay);
-			}
-
 			void Socket::flush() {
 				this->_client.flush();
 			}
 
 			void Socket::stop() {
 				this->_client.stop();
+			}
+
+			uint8_t Socket::status() {
+				return this->_client.status();
+			}
+
+			void Socket::setNoDelay(bool nodelay) {
+				this->_client.setNoDelay(nodelay);
+			}
+
+			bool Socket::getNoDelay() {
+				return this->_client.getNoDelay();
 			}
 
 			bool Socket::isWebSocket() {

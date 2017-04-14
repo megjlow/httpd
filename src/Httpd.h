@@ -12,39 +12,41 @@
 
 using namespace httpd::sockets;
 
-typedef void (*Callback)(HttpContext*);
+namespace httpd {
+	typedef void (*Callback)(HttpContext*);
 
-class CallbackFunc {
-public:
-	CallbackFunc(char* url, Callback callback, bool wildcard);
-	CallbackFunc(char* url, Callback callback);
-	~CallbackFunc();
-	Callback getCallback();
-	char* url();
-	bool wildcard();
-	bool isMatch(char* url);
-private:
-	char* _url;
-	Callback _callback;
-	bool _wildcard;
-};
+	class CallbackFunc {
+	public:
+		CallbackFunc(char* url, Callback callback, bool wildcard);
+		CallbackFunc(char* url, Callback callback);
+		~CallbackFunc();
+		Callback getCallback();
+		char* url();
+		bool wildcard();
+		bool isMatch(char* url);
+	private:
+		char* _url;
+		Callback _callback;
+		bool _wildcard;
+	};
 
-class Httpd {
-public:
-	Httpd(httpd::sockets::ServerSocket* server);
-	~Httpd();
-	void handleClient();
-	void RegisterCallback(char* url, Callback callback);
-	void RegisterCallback(char* url, Callback callback, bool wildcard);
-	void addGlobalHeader(char* header, char* value);
-	void begin();
-	Array<CallbackFunc>* callbacks();
-private:
-	ServerSocket* _server;
-	Array<CallbackFunc>* _callbacks;
-	Array<Socket>* _webSockets;
-	Array<HttpHeader>* _globalHeaders;
-	WebSocketServer* _socketServer;
-};
+	class Httpd {
+	public:
+		Httpd(httpd::sockets::ServerSocket* server);
+		~Httpd();
+		void handleClient();
+		void RegisterCallback(char* url, Callback callback);
+		void RegisterCallback(char* url, Callback callback, bool wildcard);
+		void addGlobalHeader(char* header, char* value);
+		void begin();
+		Array<CallbackFunc>* callbacks();
+	private:
+		ServerSocket* _server;
+		Array<CallbackFunc>* _callbacks;
+		Array<HttpHeader>* _globalHeaders;
+		WebSocketServer* _socketServer;
+	};
+
+}
 
 #endif

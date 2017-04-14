@@ -57,26 +57,13 @@ void HttpResponse::sendResponse() {
 		strcat(outBuf, header->value());
 		strcat(outBuf, "\r\n");
 	}
+	if(this->_body != NULL) {
+		strcat(outBuf, "\r\n");
+		strcat(outBuf, this->_body);
+	}
 	strcat(outBuf, "\r\n");
-	strcat(outBuf, this->_body);
-	strcat(outBuf, "\r\n");
-	//this->_socket->print(outBuf);
 	this->_socket->write((uint8_t*)outBuf, strlen(outBuf));
 	delete outBuf;
-	//this->_socket->print(this->_code);
-	//this->_socket->print("\r\n");
-	/*
-	for(int i=0; i<this->_headers->count(); i++) {
-		HttpHeader* header = this->_headers->get(i);
-		this->_socket->print(header->key());
-		this->_socket->print(": ");
-		this->_socket->print(header->value());
-		this->_socket->print("\r\n");
-	}
-	this->_socket->print("\r\n");
-	*/
-	//this->_socket->print(this->_body);
-	//this->_socket->print("\r\n");
 }
 
 char* HttpResponse::pingResponse() {

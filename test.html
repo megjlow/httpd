@@ -5,26 +5,44 @@
     
       $(document).ready(function() {
         
-        var connection;
+        var webSocket;
+        
+        function onOpen(evt) {
+		    console.log('onOpen');
+		    webSocket.send('WebSocket rocks');
+		  }
+		  
+		function onMessage(evt) {
+			alert(evt.data);
+		}
         
         $('#connectsocket').on('click', function(e) {
         	e.preventDefault();
         	var ip = $('#ipaddress').val();
-        	connection = new WebSocket('ws://' + ip + '/', ['arduino']);
+        	webSocket = new WebSocket('ws://' + ip + '/', ['arduino']);
         	
+        	webSocket.onopen = function(evt) { onOpen(evt) };
+    		//websocket.onclose = function(evt) { onClose(evt) };
+    		websocket.onmessage = function(evt) { onMessage(evt) };
+    		//websocket.onerror = function(evt) { onError(evt) };
+        	/*
         	connection.onopen = function () {
-			connection.send('Message from Browser to ESP8266 yay its Working!! ' + new Date()); 
-			connection.send('ping');
-		};
-		
-		connection.onerror = function (error) {
-			console.log('WebSocket Error ', error);
-		};
-
-		connection.onmessage = function (e) {
-			console.log('Server: ', e.data);
-			connection.send('Time: ' + new Date()); 
-		};
+        		alert('send');
+				connection.send('Message from Browser to ESP8266 yay its Working!! ' + new Date()); 
+				connection.send('ping');
+			};
+			connection.onerror = function (error) {
+				console.log('WebSocket Error ', error);
+			};
+			connection.onclose = function(event) {
+				console.log('WebSocket close ', event);
+			};
+	
+			connection.onmessage = function (e) {
+				console.log('Server: ', e.data);
+				connection.send('Time: ' + new Date()); 
+			};		
+			*/
         });
         
         //var connection = new WebSocket('ws://10.11.2.1:81/', ['arduino']);
@@ -101,7 +119,7 @@
   </head>
   <body>
   	<label for="ipaddress">IPAddress</label>
-  	<input type="text" id="ipaddress" /><br /><br />
+  	<input type="text" id="ipaddress" value="192.168.2.102" /><br /><br />
   	<a href="javascript:void(0);" id="connectsocket">Connect socket</a>
   	<div class="pin">
   		Pin 2 <a href="javascript:void(0);" class="on" data-pin="2">ON</a> <a href="javascript:void(0);" class="off" data-pin="2">OFF</a> <label class="state" data-pin="2">OFF</label> Pin 2 is reversed on some boards

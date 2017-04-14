@@ -28,9 +28,11 @@ namespace httpd {
 			size_t print(char);
 			size_t print(const char[]);
 			size_t write(const uint8_t *buf, size_t size);
-			void setNoDelay(bool noDelay);
 			void flush();
 			void stop();
+			uint8_t status();
+			void setNoDelay(bool nodelay);
+			bool getNoDelay();
 			void setWebSocket();
 			bool isWebSocket();
 		private:

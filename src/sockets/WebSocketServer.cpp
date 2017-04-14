@@ -7,39 +7,53 @@
 using namespace httpd::sockets;
 
 WebSocketServer::WebSocketServer() {
-
+	this->_sockets = new Array<Socket>();
 }
 
 WebSocketServer::~WebSocketServer() {
 
 }
 
-void WebSocketServer::add(HttpContext* context, Socket* socket) {
-	Serial.println("add");
-	socket->setWebSocket();
-	if(socket->connected()) {
-		Serial.println("socket still connected");
+Socket* WebSocketServer::available() {
+	Socket* retval = NULL;
+	if(this->_sockets->count() > 0)
+	{
+		for(int i=0; i<_sockets->count(); i++)
+		{
+			if(_sockets->get(i)->available() > 0) {
+				Serial.print("Websocket available "); Serial.println(_sockets->get(i)->available());
+				retval = _sockets->get(i);
+			}
+		}
 	}
+	return retval;
+}
+
+void WebSocketServer::add(HttpContext* context, Socket* socket) {
+	socket->setNoDelay(true);
+	socket->setWebSocket();
+	this->_sockets->add(socket);
 	char* fixedKey = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
-  char* wsKey = context->request()->getHeader("Sec-WebSocket-Key");
-  char appendedKey[128];
-  strcat(appendedKey, wsKey);
-  strcat(appendedKey, fixedKey);
-  uint8_t hash[20];
-  sha1(appendedKey, &hash[0]);
-  char toencodeLen = strlen((char*) hash) + 1;
-  char *encoded = new char[base64_encode_expected_len(toencodeLen)+1];
-  base64_encode_chars((char*)hash, toencodeLen, encoded);
+    char* wsKey = context->request()->getHeader("Sec-WebSocket-Key");
+    char appendedKey[128] = {0};
+    strcat(appendedKey, wsKey);
+    strcat(appendedKey, fixedKey);
+    uint8_t hash[20] = {0};
+    sha1(appendedKey, &hash[0]);
 
-  context->response()->setResponseCode("HTTP/1.1 101 Switching Protocols");
-  context->response()->addHeader("Upgrade", "websocket");
-  context->response()->addHeader("Connection", "Upgrade");
-  context->response()->addHeader("Sec-WebSocket-Accept", encoded);
-  context->response()->addHeader("Sec-WebSocket-Protocol:", "arduino");
-  context->response()->addHeader("Sec-WebSocket-Version", "13");
-  context->response()->addHeader("Access-Control-Allow-Origin", "*");
-  context->response()->sendResponse();
+    int toencodelen = base64_encode_expected_len(15);
+    char *encoded = new char[128];
+    base64_encode_chars((char*)hash, toencodelen, encoded);
 
-  delete context;
+    context->response()->setResponseCode("HTTP/1.1 101 Switching Protocols");
+    context->response()->addHeader("Server", "httpd");
+    context->response()->addHeader("Upgrade", "websocket");
+    context->response()->addHeader("Connection", "Upgrade");
+    context->response()->addHeader("Sec-WebSocket-Accept", encoded);
+    context->response()->addHeader("Sec-WebSocket-Protocol", "arduino");
+    context->response()->addHeader("Sec-WebSocket-Version", "13");
+    context->response()->sendResponse();
+
+    delete encoded;
 
 }

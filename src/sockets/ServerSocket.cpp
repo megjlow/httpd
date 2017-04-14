@@ -9,9 +9,10 @@ namespace httpd {
 			this->_server = new WiFiServer(port);
 #elif ARDUINO_STM32_FEATHER
 			this->_server = new AdafruitTCPServer(port);
+			this->_server.setNoDelay(true);
 			this->_server->err_actions(true, false);
 #endif
-
+			this->_server->setNoDelay(true);
 		}
 
 		ServerSocket::~ServerSocket() {

@@ -12,6 +12,7 @@ public:
 	WebSocketServer();
 	~WebSocketServer();
 	void add(HttpContext* context, Socket* socket);
+	Socket* available();
 private:
 	Array<Socket>* _sockets;
 };
