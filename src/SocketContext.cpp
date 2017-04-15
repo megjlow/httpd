@@ -23,7 +23,11 @@ namespace httpd {
 	}
 
 	char* SocketContext::getMessage() {
-		return "asdf";
+		char* retval = NULL;
+		if(_inFrame != NULL) {
+			retval = _inFrame->body();
+		}
+		return retval;
 	}
 
 	void SocketContext::sendMessage(char* message) {

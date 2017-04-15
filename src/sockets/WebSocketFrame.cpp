@@ -67,7 +67,11 @@ WebSocketFrame::WebSocketFrame(char* message) {
 }
 
 WebSocketFrame::~WebSocketFrame() {
-	if(_body != NULL) {
-		delete _body;
+	if(this->_body != NULL) {
+		delete this->_body;
 	}
+}
+
+char* WebSocketFrame::body() {
+	return this->_body;
 }

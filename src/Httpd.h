@@ -25,6 +25,7 @@ namespace httpd {
 		void handleClient();
 		void RegisterCallback(char* url, Callback callback);
 		void RegisterCallback(char* url, Callback callback, bool wildcard);
+		void RegisterCallback(char* url, char* operation, Callback callback);
 		void RegisterSocketCallback(SocketCallback callback);
 		void addGlobalHeader(char* header, char* value);
 		void begin();

@@ -38,22 +38,32 @@ namespace httpd {
 		Socket* socket = this->_server->available();
 		Socket* webSocket = this->_socketServer->available();
 		if(webSocket != NULL) {
+			unsigned long startTime = millis();
+			Serial.print("WEBSOCKET START  ");
+			Utils::printFreeHeap();
+			Serial.println();
 			if(this->_socketCallbacks->count() > 0) {
 				SocketContext* context = new SocketContext(webSocket);
 				for(int i=0; i<this->_socketCallbacks->count(); i++) {
 					SocketCallbackFunc *callback = this->_socketCallbacks->get(i);
 					(*callback->getCallback())(context);
 				}
+				delete context;
 			}
+			unsigned long endTime = millis();
+			Serial.print("WEBSOCKET END    ");
+			Utils::printFreeHeap();
+			Serial.print(" ELAPSED ");
+			Serial.println(endTime - startTime);
 		}
 		if(!socket) {
-			delay(1000);
+			delay(10);
 			return;
 		}
 
-		//this->_webSockets->add(socket);
 		Serial.print("START  ");
 		Utils::printFreeHeap();
+		Serial.println();
 		HttpContext* context = new HttpContext(socket);
 		for(int i=0; i<this->_globalHeaders->count(); i++) {
 			context->response()->addHeader(new HttpHeader(this->_globalHeaders->get(i)));
@@ -66,8 +76,7 @@ namespace httpd {
 			else {
 				for(int i=0; i<this->_callbacks->count(); i++) {
 					CallbackFunc *callback = this->_callbacks->get(i);
-					callback->isMatch(context->request()->url());
-					if(callback->isMatch(context->request()->url())) {
+					if(callback->isMatch(context->request()->url(), context->request()->method())) {
 						(*callback->getCallback())(context);
 						break;
 					}
@@ -79,6 +88,7 @@ namespace httpd {
 		delete context;
 		Serial.print("END    ");
 		Utils::printFreeHeap();
+		Serial.println();
 	}
 
 	Array<CallbackFunc>* Httpd::callbacks() {
@@ -91,6 +101,11 @@ namespace httpd {
 
 	void Httpd::RegisterCallback(char* url, void(*callback)(HttpContext* context), bool wildcard) {
 		CallbackFunc* c = new CallbackFunc(url, callback, wildcard);
+		this->_callbacks->add(c);
+	}
+
+	void Httpd::RegisterCallback(char* url, char* operation, void(*callback)(HttpContext* context)) {
+		CallbackFunc* c = new CallbackFunc(url, operation, callback);
 		this->_callbacks->add(c);
 	}
 

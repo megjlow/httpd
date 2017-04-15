@@ -81,8 +81,8 @@ void Utils::urlDecode(char *dst, const char *src) {
 
 void Utils::printFreeHeap() {
 #ifdef ARDUINO_STM32_FEATHER
-	Serial.println(Feather.dbgHeapFree());
+	Serial.print(Feather.dbgHeapFree());
 #elif ESP8266
-	Serial.println(ESP.getFreeHeap());
+	Serial.print(ESP.getFreeHeap());
 #endif
 }

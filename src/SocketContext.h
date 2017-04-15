@@ -18,6 +18,7 @@ namespace httpd {
 			Socket* _socket;
 			WebSocketFrame* _inFrame = NULL;
 			WebSocketFrame* _outFrame = NULL;
+			char* _body = NULL;
 	};
 }
 #endif

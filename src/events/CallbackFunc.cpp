@@ -5,6 +5,13 @@ namespace httpd {
 	namespace events {
 
 
+		CallbackFunc::CallbackFunc(char* url, char* method, Callback callback)
+		{
+			this->_url = strdup(url);
+			this->_callback = callback;
+			this->_method = strdup(method);
+		}
+
 		CallbackFunc::CallbackFunc(char* url, Callback callback, bool wildcard) {
 			this->_url = strdup(url);
 			this->_callback = callback;
@@ -15,7 +22,12 @@ namespace httpd {
 		}
 
 		CallbackFunc::~CallbackFunc() {
-			free(this->_url);
+			if(this->_url != NULL) {
+				free(this->_url);
+			}
+			if(this->_method != NULL) {
+				free(this->_method);
+			}
 		}
 
 		Callback CallbackFunc::getCallback() {
@@ -30,9 +42,11 @@ namespace httpd {
 			return this->_wildcard;
 		}
 
-		bool CallbackFunc::isMatch(char* url) {
+		bool CallbackFunc::isMatch(char* url, char* method) {
 			bool retval = false;
-			if((this->_wildcard && strncmp(this->_url, url, strlen(this->_url)) == 0) || (strncmp(this->_url, url, sizeof(this->_url)) == 0)) {
+			if(
+				(this->_wildcard && strncmp(this->_url, url, strlen(this->_url)) == 0 && (this->_method == NULL || strncmp(this->_method, method, strlen(this->_method)) == 0)) ||
+				(strncmp(this->_url, url, sizeof(this->_url)) == 0 && (this->_method == NULL || strncmp(this->_method, method, strlen(this->_method)) == 0))) {
 				retval = true;
 			}
 			return retval;
