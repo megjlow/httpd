@@ -57,13 +57,14 @@ namespace httpd {
 		for(int i=0; i<messageLen; i++) {
 			b[i] = (message[i] ^ mask[i % 4]);
 		}
-
+		/*
 		Serial.print("sending message: [");
 		for(int i=0; i<(headerLen + messageLen); i++) {
 			Serial.print(responseMessage[i], HEX);
 			Serial.print(" ");
 		}
 		Serial.println("]");
+		*/
 
 		_socket->write((uint8_t*)responseMessage, headerLen + messageLen);
 		_socket->flush();

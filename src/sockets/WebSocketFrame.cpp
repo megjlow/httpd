@@ -31,14 +31,6 @@ WebSocketFrame::WebSocketFrame() {
  * Construct a web socket frame from an incoming message
  */
 WebSocketFrame::WebSocketFrame(char* message) {
-
-	Serial.print("received message: [");
-	for(int i=0; message[i] != 0x00; i++) {
-		Serial.print(message[i], HEX);
-		Serial.print(" ");
-	}
-	Serial.println("]");
-
 	_fin = ((*message >> 7) & 0x01); // this had best be 0x01 text message
 	_rsv1 = ((*message >> 6) & 0x01);
 	_rsv2 = ((*message >> 5) & 0x01);
@@ -70,7 +62,7 @@ WebSocketFrame::WebSocketFrame(char* message) {
 	}
 	_body[_length] = 0;
 
-	dumpFrame();
+	//dumpFrame();
 
 }
 

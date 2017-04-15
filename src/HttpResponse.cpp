@@ -46,24 +46,27 @@ void HttpResponse::setBody(String body) {
 }
 
 void HttpResponse::sendResponse() {
-	char* outBuf = new char[1024];
-	memset(outBuf, '\0', sizeof(outBuf));
-	strcat(outBuf, this->_code);
-	strcat(outBuf, "\r\n");
-	for(int i=0; i<this->_headers->count(); i++) {
-		HttpHeader* header = this->_headers->get(i);
-		strcat(outBuf, header->key());
-		strcat(outBuf, ": ");
-		strcat(outBuf, header->value());
+	if(this->_code != NULL) {
+		char* outBuf = new char[1024];
+		memset(outBuf, '\0', sizeof(outBuf));
+		strcat(outBuf, this->_code);
 		strcat(outBuf, "\r\n");
-	}
-	if(this->_body != NULL) {
+		for(int i=0; i<this->_headers->count(); i++) {
+			HttpHeader* header = this->_headers->get(i);
+			strcat(outBuf, header->key());
+			strcat(outBuf, ": ");
+			strcat(outBuf, header->value());
+			strcat(outBuf, "\r\n");
+		}
+		if(this->_body != NULL) {
+			strcat(outBuf, "\r\n");
+			strcat(outBuf, this->_body);
+		}
 		strcat(outBuf, "\r\n");
-		strcat(outBuf, this->_body);
+		Serial.println(outBuf);
+		this->_socket->write((uint8_t*)outBuf, strlen(outBuf));
+		delete outBuf;
 	}
-	strcat(outBuf, "\r\n");
-	this->_socket->write((uint8_t*)outBuf, strlen(outBuf));
-	delete outBuf;
 }
 
 char* HttpResponse::pingResponse() {

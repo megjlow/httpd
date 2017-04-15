@@ -9,50 +9,18 @@
 #include "Utils.h"
 #include "sockets/WebSocketFrame.h"
 #include "SocketContext.h"
+#include "events/CallbackFunc.h"
+#include "events/SocketCallbackFunc.h"
 
 using namespace httpd::sockets;
+using namespace httpd::events;
 
 namespace httpd {
 
 
-	CallbackFunc::CallbackFunc(char* url, Callback callback, bool wildcard) {
-		this->_url = strdup(url);
-		this->_callback = callback;
-		this->_wildcard = wildcard;
-	}
-
-	CallbackFunc::CallbackFunc(char* url, Callback callback): CallbackFunc(url, callback, false) {
-	}
-	CallbackFunc::~CallbackFunc() {
-		free(this->_url);
-	}
-	Callback CallbackFunc::getCallback() {
-		return this->_callback;
-	}
-	char* CallbackFunc::url() {
-		return this->_url;
-	}
-
-	bool CallbackFunc::wildcard() {
-		return this->_wildcard;
-	}
-
-	bool CallbackFunc::isMatch(char* url) {
-		bool retval = false;
-		if(this->_wildcard && strncmp(this->_url, url, strlen(this->_url)) == 0) {
-			retval = true;
-		}
-		//int strncmp(const char *s1, const char *s2, size_t n);
-		else if(strncmp(this->_url, url, sizeof(this->_url)) == 0) {
-		//else if(strcmp(this->_url, url) == 0) {
-			retval = true;
-		}
-		return retval;
-	}
-
-
 	Httpd::Httpd(ServerSocket* server) {
 		this->_callbacks = new Array<CallbackFunc>();
+		this->_socketCallbacks = new Array<SocketCallbackFunc>();
 		this->_server = server;
 		this->_globalHeaders = new Array<HttpHeader>();
 		this->_socketServer = new WebSocketServer();
@@ -70,9 +38,13 @@ namespace httpd {
 		Socket* socket = this->_server->available();
 		Socket* webSocket = this->_socketServer->available();
 		if(webSocket != NULL) {
-			SocketContext* context = new SocketContext(webSocket);
-			Serial.print("got message: ["); Serial.println(context->getMessage()); Serial.print("]");
-			context->sendMessage("bum");
+			if(this->_socketCallbacks->count() > 0) {
+				SocketContext* context = new SocketContext(webSocket);
+				for(int i=0; i<this->_socketCallbacks->count(); i++) {
+					SocketCallbackFunc *callback = this->_socketCallbacks->get(i);
+					(*callback->getCallback())(context);
+				}
+			}
 		}
 		if(!socket) {
 			delay(1000);
@@ -124,6 +96,12 @@ namespace httpd {
 
 	void Httpd::RegisterCallback(char* url, void(*callback)(HttpContext* context)) {
 		this->RegisterCallback(url, callback, false);
+	}
+
+	void Httpd::RegisterSocketCallback(SocketCallback callback)
+	{
+		SocketCallbackFunc* f = new SocketCallbackFunc(callback);
+		this->_socketCallbacks->add(f);
 	}
 
 }

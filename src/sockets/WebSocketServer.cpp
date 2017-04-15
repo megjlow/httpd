@@ -21,7 +21,6 @@ Socket* WebSocketServer::available() {
 		for(int i=0; i<_sockets->count(); i++)
 		{
 			if(_sockets->get(i)->available() > 0) {
-				Serial.print("Websocket available "); Serial.println(_sockets->get(i)->available());
 				retval = _sockets->get(i);
 			}
 		}
