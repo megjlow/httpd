@@ -38,6 +38,39 @@ namespace httpd {
 		return retval;
 	}
 
+	void SocketContext::sendPong(char* message) {
+		int messageLen = strlen(message);
+		int headerLen = 2;
+		if(messageLen > 126) {
+			headerLen += 2;
+		}
+
+		char responseMessage[headerLen + messageLen + 1];
+		for(int i=0; i<headerLen; i++) {
+			responseMessage[i] = 0;
+		}
+		responseMessage[headerLen + messageLen] = 0;
+		responseMessage[0] |= bit(7); // fin
+		responseMessage[0] |= 0x0a; // opcode
+		responseMessage[1] |= strlen(message); // length
+
+		char* b = &responseMessage[2];
+		for(int i=0; i<messageLen; i++) {
+			b[i] = message[i];
+		}
+
+		Serial.print("sending message: [");
+		for(int i=0; i<(headerLen + messageLen); i++) {
+			Serial.print(responseMessage[i], HEX);
+			Serial.print(" ");
+		}
+		Serial.println("]");
+
+
+		_socket->write((uint8_t*)responseMessage, headerLen + messageLen);
+		_socket->flush();
+	}
+
 	void SocketContext::sendMessage(char* message) {
 		char mask[4] = {0};
 		mask[0] = random(0xFF);
