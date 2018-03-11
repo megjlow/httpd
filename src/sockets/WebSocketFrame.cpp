@@ -75,3 +75,7 @@ WebSocketFrame::~WebSocketFrame() {
 char* WebSocketFrame::body() {
 	return this->_body;
 }
+
+int WebSocketFrame::opCode() {
+	return this->_opcode;
+}

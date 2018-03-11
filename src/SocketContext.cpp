@@ -30,6 +30,14 @@ namespace httpd {
 		return retval;
 	}
 
+	int SocketContext::opCode() {
+		int retval = 0;
+		if(_inFrame != NULL) {
+			retval = _inFrame->opCode();
+		}
+		return retval;
+	}
+
 	void SocketContext::sendMessage(char* message) {
 		char mask[4] = {0};
 		mask[0] = random(0xFF);
@@ -37,8 +45,10 @@ namespace httpd {
 		mask[2] = random(0xFF);
 		mask[3] = random(0xFF);
 
+		//0x81 0x05 0x48 0x65 0x6c 0x6c 0x6f
+
 		int messageLen = strlen(message);
-		int headerLen = 6;
+		int headerLen = 2;
 		if(messageLen > 126) {
 			headerLen += 2;
 		}
@@ -50,25 +60,30 @@ namespace httpd {
 		responseMessage[headerLen + messageLen] = 0;
 		responseMessage[0] |= bit(7); // fin
 		responseMessage[0] |= 0x01; // opcode
-		responseMessage[1] |= bit(7); // mask
+		//responseMessage[0] = 0x81;
+		//responseMessage[1] |= bit(7); // mask
 		responseMessage[1] |= strlen(message); // length
-		responseMessage[2] = mask[0]; // mask
-		responseMessage[3] = mask[1]; // mask
-		responseMessage[4] = mask[2]; // mask
-		responseMessage[5] = mask[3]; // mask
+		//responseMessage[2] = mask[0]; // mask
+		//responseMessage[3] = mask[1]; // mask
+		//responseMessage[4] = mask[2]; // mask
+		//responseMessage[5] = mask[3]; // mask
 
-		char* b = &responseMessage[6];
+		//char* b = &responseMessage[6];
+		//for(int i=0; i<messageLen; i++) {
+			//b[i] = (message[i] ^ mask[i % 4]);
+		//}
+		char* b = &responseMessage[2];
 		for(int i=0; i<messageLen; i++) {
-			b[i] = (message[i] ^ mask[i % 4]);
+			b[i] = message[i];
 		}
-		/*
+
 		Serial.print("sending message: [");
 		for(int i=0; i<(headerLen + messageLen); i++) {
 			Serial.print(responseMessage[i], HEX);
 			Serial.print(" ");
 		}
 		Serial.println("]");
-		*/
+
 
 		_socket->write((uint8_t*)responseMessage, headerLen + messageLen);
 		_socket->flush();

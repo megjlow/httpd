@@ -8,6 +8,7 @@ public:
 	WebSocketFrame(char* message);
 	~WebSocketFrame();
 	char* body();
+	int opCode();
 private:
 	int _fin = 0;
 	int _rsv1 = 0;

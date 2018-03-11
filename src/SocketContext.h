@@ -14,6 +14,7 @@ namespace httpd {
 			~SocketContext();
 			char* getMessage();
 			void sendMessage(char* message);
+			int opCode();
 		private:
 			Socket* _socket;
 			WebSocketFrame* _inFrame = NULL;
