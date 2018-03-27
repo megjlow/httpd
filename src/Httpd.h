@@ -5,9 +5,9 @@
 #include <sockets/Socket.h>
 #include <sockets/ServerSocket.h>
 #include <sockets/WebSocketServer.h>
+#include <sockets/SocketContext.h>
 #include <events/CallbackFunc.h>
 #include <events/SocketCallbackFunc.h>
-#include <SocketContext.h>
 #include <HttpContext.h>
 #include <HttpRequest.h>
 #include <HttpResponse.h>

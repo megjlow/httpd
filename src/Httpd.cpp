@@ -8,7 +8,7 @@
 #include "Array.h"
 #include "Utils.h"
 #include "sockets/WebSocketFrame.h"
-#include "SocketContext.h"
+#include "sockets/SocketContext.h"
 #include "events/CallbackFunc.h"
 #include "events/SocketCallbackFunc.h"
 
