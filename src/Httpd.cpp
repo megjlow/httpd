@@ -8,7 +8,8 @@
 #include "Array.h"
 #include "Utils.h"
 #include "sockets/WebSocketFrame.h"
-#include "sockets/SocketContext.h"
+#include "sockets/WebSocket.h"
+//#include "sockets/SocketContext.h"
 #include "events/CallbackFunc.h"
 #include "events/SocketCallbackFunc.h"
 
@@ -36,19 +37,20 @@ namespace httpd {
 
 	void Httpd::handleClient() {
 		Socket* socket = this->_server->available();
-		Socket* webSocket = this->_socketServer->available();
+		WebSocket* webSocket = this->_socketServer->available();
 		if(webSocket != NULL) {
 			unsigned long startTime = millis();
 			Serial.print("WEBSOCKET START  ");
 			Utils::printFreeHeap();
 			Serial.println();
 			if(this->_socketCallbacks->count() > 0) {
-				SocketContext* context = new SocketContext(webSocket);
+				//SocketContext* context = new SocketContext(webSocket);
 				for(int i=0; i<this->_socketCallbacks->count(); i++) {
 					SocketCallbackFunc *callback = this->_socketCallbacks->get(i);
-					(*callback->getCallback())(context);
+					//(*callback->getCallback())(context);
+					(*callback->getCallback())(webSocket);
 				}
-				delete context;
+				//delete context;
 			}
 			unsigned long endTime = millis();
 			Serial.print("WEBSOCKET END    ");

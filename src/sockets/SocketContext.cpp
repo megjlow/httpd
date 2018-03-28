@@ -2,6 +2,9 @@
 #include "SocketContext.h"
 #include "sockets/WebSocketFrame.h"
 
+#include "Firmata.h"
+#include "Stream.h"
+
 
 namespace httpd {
 	namespace sockets {
@@ -12,6 +15,9 @@ namespace httpd {
 			uint8_t buffer[avail];
 			socket->readBytes((char*)buffer, avail);
 			_inFrame = new WebSocketFrame((char*)buffer);
+
+			//Firmata.setFirmwareVersion(FIRMATA_FIRMWARE_MAJOR_VERSION, FIRMATA_FIRMWARE_MINOR_VERSION);
+			//Firmata.begin(socket[0]);
 		}
 
 		SocketContext::~SocketContext() {
@@ -42,6 +48,7 @@ namespace httpd {
 		void SocketContext::sendPong(char* message) {
 			int messageLen = strlen(message);
 			int headerLen = 2;
+
 			if(messageLen > 126) {
 				headerLen += 2;
 			}
@@ -73,14 +80,6 @@ namespace httpd {
 		}
 
 		void SocketContext::sendMessage(char* message) {
-			char mask[4] = {0};
-			mask[0] = random(0xFF);
-			mask[1] = random(0xFF);
-			mask[2] = random(0xFF);
-			mask[3] = random(0xFF);
-
-			//0x81 0x05 0x48 0x65 0x6c 0x6c 0x6f
-
 			int messageLen = strlen(message);
 			int headerLen = 2;
 			if(messageLen > 126) {
@@ -97,10 +96,6 @@ namespace httpd {
 			//responseMessage[0] = 0x81;
 			//responseMessage[1] |= bit(7); // mask
 			responseMessage[1] |= strlen(message); // length
-			//responseMessage[2] = mask[0]; // mask
-			//responseMessage[3] = mask[1]; // mask
-			//responseMessage[4] = mask[2]; // mask
-			//responseMessage[5] = mask[3]; // mask
 
 			//char* b = &responseMessage[6];
 			//for(int i=0; i<messageLen; i++) {

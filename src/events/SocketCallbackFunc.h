@@ -2,13 +2,14 @@
 #define socketcallbackfunc_h
 
 #include <Arduino.h>
-#include "sockets/SocketContext.h"
+#include "sockets/WebSocket.h"
+//#include "sockets/SocketContext.h"
 
 namespace httpd {
 
 	namespace events {
 
-		typedef void (*SocketCallback)(httpd::sockets::SocketContext*);
+		typedef void (*SocketCallback)(httpd::sockets::WebSocket*);
 
 		class SocketCallbackFunc {
 		public:

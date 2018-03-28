@@ -1,5 +1,6 @@
 #include <sockets/Socket.h>
 
+#include "Firmata.h"
 
 namespace httpd {
 	namespace sockets {
@@ -11,6 +12,10 @@ namespace httpd {
 #endif
 				this->_client = client;
 				this->_isWebSocket = false;
+			}
+
+			Socket::Socket(const Socket* socket) {
+				this->_client = socket->_client;
 			}
 
 			Socket::~Socket() {
@@ -28,7 +33,7 @@ namespace httpd {
 				return this->_client.connected();
 			}
 
-			size_t Socket::readBytes( char *buffer, size_t length) {
+			size_t Socket::readBytes(char *buffer, size_t length) {
 				return this->_client.readBytes(buffer, length);
 			}
 
@@ -70,6 +75,18 @@ namespace httpd {
 
 			void Socket::setWebSocket() {
 				this->_isWebSocket = true;
+			}
+
+			size_t Socket::write(uint8_t byte) {
+				this->_client.write(byte);
+			}
+
+			int Socket::read() {
+				return this->_client.read();
+			}
+
+			int Socket::peek() {
+				return this->_client.peek();
 			}
 
 	}

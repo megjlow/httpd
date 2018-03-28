@@ -1,6 +1,7 @@
 #ifndef isocket_h
 #define isocket_h
 
+#include <Stream.h>
 #include <sockets/Socket.h>
 
 #ifdef ESP8266
@@ -14,20 +15,21 @@ namespace httpd {
 
 	namespace sockets {
 
-		class Socket {
+		class Socket: public Stream {
 		public:
 #ifdef ESP8266
 				Socket(WiFiClient client);
 #elif ARDUINO_STM32_FEATHER
 				Socket(AdafruitTCP client);
 #endif
+			Socket(const Socket* obj);
 			~Socket();
 			int available();
 			uint8_t connected();
-			size_t readBytes( char *buffer, size_t length);
+			virtual size_t readBytes( char *buffer, size_t length);
 			size_t print(char);
 			size_t print(const char[]);
-			size_t write(const uint8_t *buf, size_t size);
+			virtual size_t write(const uint8_t *buf, size_t size);
 			void flush();
 			void stop();
 			uint8_t status();
@@ -35,6 +37,11 @@ namespace httpd {
 			bool getNoDelay();
 			void setWebSocket();
 			bool isWebSocket();
+
+			virtual size_t write(uint8_t byte);
+			virtual int read();
+			virtual int peek();
+
 		private:
 #ifdef ESP8266
 				WiFiClient _client;
@@ -42,6 +49,8 @@ namespace httpd {
 				AdafruitTCP _client;
 #endif
 			bool _isWebSocket;
+		protected:
+
 		};
 
 	}

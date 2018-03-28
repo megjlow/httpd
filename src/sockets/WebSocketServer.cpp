@@ -1,21 +1,22 @@
 #include <Arduino.h>
 #include <sockets/WebSocketServer.h>
 #include <sockets/Socket.h>
+#include <sockets/WebSocket.h>
 #include <Hash.h>
 #include <libb64/cencode.h>
 
 using namespace httpd::sockets;
 
 WebSocketServer::WebSocketServer() {
-	this->_sockets = new Array<Socket>();
+	this->_sockets = new Array<WebSocket>();
 }
 
 WebSocketServer::~WebSocketServer() {
 
 }
 
-Socket* WebSocketServer::available() {
-	Socket* retval = NULL;
+WebSocket* WebSocketServer::available() {
+	WebSocket* retval = NULL;
 	if(this->_sockets->count() > 0)
 	{
 		for(int i=0; i<_sockets->count(); i++)
@@ -31,7 +32,7 @@ Socket* WebSocketServer::available() {
 void WebSocketServer::add(HttpContext* context, Socket* socket) {
 	socket->setNoDelay(true);
 	socket->setWebSocket();
-	this->_sockets->add(socket);
+	this->_sockets->add(new WebSocket(socket));
 	char* fixedKey = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
     char* wsKey = context->request()->getHeader("Sec-WebSocket-Key");
     char appendedKey[128] = {0};

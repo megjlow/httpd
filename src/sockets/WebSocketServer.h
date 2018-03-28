@@ -3,6 +3,7 @@
 
 #include <Array.h>
 #include <sockets/Socket.h>
+#include <sockets/WebSocket.h>
 #include <HttpContext.h>
 
 using namespace httpd::sockets;
@@ -12,9 +13,9 @@ public:
 	WebSocketServer();
 	~WebSocketServer();
 	void add(HttpContext* context, Socket* socket);
-	Socket* available();
+	WebSocket* available();
 private:
-	Array<Socket>* _sockets;
+	Array<WebSocket>* _sockets;
 };
 
 #endif
