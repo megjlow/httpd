@@ -12,7 +12,8 @@ class WebSocketServer {
 public:
 	WebSocketServer();
 	~WebSocketServer();
-	void add(HttpContext* context, Socket* socket);
+	void add(Socket* socket);
+	void remove(WebSocket* socket);
 	WebSocket* available();
 private:
 	Array<WebSocket>* _sockets;

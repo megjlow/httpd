@@ -14,9 +14,6 @@ HttpContext::HttpContext(Socket* socket) {
 
 
 HttpContext::~HttpContext() {
-	if(this->_socket->isWebSocket() == 0) {
-		delete this->_socket;
-	}
 	delete this->_request;
 	delete this->_response;
 }

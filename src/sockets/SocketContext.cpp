@@ -14,33 +14,33 @@ namespace httpd {
 			int avail = socket->available();
 			uint8_t buffer[avail];
 			socket->readBytes((char*)buffer, avail);
-			_inFrame = new WebSocketFrame((char*)buffer);
+			_request = new WebSocketFrame((char*)buffer);
 
 			//Firmata.setFirmwareVersion(FIRMATA_FIRMWARE_MAJOR_VERSION, FIRMATA_FIRMWARE_MINOR_VERSION);
 			//Firmata.begin(socket[0]);
 		}
 
 		SocketContext::~SocketContext() {
-			if(_inFrame != NULL) {
-				delete _inFrame;
+			if(_request != NULL) {
+				delete _request;
 			}
-			if(_outFrame != NULL) {
-				delete _outFrame;
+			if(_response != NULL) {
+				delete _response;
 			}
 		}
 
 		char* SocketContext::getMessage() {
 			char* retval = NULL;
-			if(_inFrame != NULL) {
-				retval = _inFrame->body();
+			if(_request != NULL) {
+				retval = _request->body();
 			}
 			return retval;
 		}
 
 		int SocketContext::opCode() {
 			int retval = 0;
-			if(_inFrame != NULL) {
-				retval = _inFrame->opCode();
+			if(_request != NULL) {
+				retval = _request->opCode();
 			}
 			return retval;
 		}

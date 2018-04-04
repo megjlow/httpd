@@ -18,8 +18,8 @@ namespace httpd {
 				void sendPong(char* message);
 			private:
 				Socket* _socket;
-				WebSocketFrame* _inFrame = NULL;
-				WebSocketFrame* _outFrame = NULL;
+				WebSocketFrame* _request = NULL;
+				WebSocketFrame* _response = NULL;
 				char* _body = NULL;
 		};
 	}

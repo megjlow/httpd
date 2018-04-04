@@ -1,6 +1,8 @@
 #include <Arduino.h>
 #include <sockets/Socket.h>
 #include <sockets/ServerSocket.h>
+#include <Hash.h>
+#include <libb64/cencode.h>
 #include "Httpd.h"
 #include "HttpContext.h"
 #include "HttpRequest.h"
@@ -44,13 +46,18 @@ namespace httpd {
 			Utils::printFreeHeap();
 			Serial.println();
 			if(this->_socketCallbacks->count() > 0) {
-				//SocketContext* context = new SocketContext(webSocket);
-				for(int i=0; i<this->_socketCallbacks->count(); i++) {
-					SocketCallbackFunc *callback = this->_socketCallbacks->get(i);
-					//(*callback->getCallback())(context);
-					(*callback->getCallback())(webSocket);
+				SocketContext* context = new SocketContext(webSocket);
+				if(context->opCode() == Opcode::close) {
+					_socketServer->remove(webSocket);
+					delete webSocket;
 				}
-				//delete context;
+				else {
+					for(int i=0; i<this->_socketCallbacks->count(); i++) {
+						SocketCallbackFunc *callback = this->_socketCallbacks->get(i);
+						(*callback->getCallback())(context);
+					}
+				}
+				delete context;
 			}
 			unsigned long endTime = millis();
 			Serial.print("WEBSOCKET END    ");
@@ -73,7 +80,28 @@ namespace httpd {
 		if(context->request()->parseSuccess() == true) {
 			// check if it's a request to upgrade to a websocket, if it is then hand it off to the websocket server
 			if(context->request()->getHeader("Upgrade") != NULL && strcmp(context->request()->getHeader("Upgrade"), "websocket") == 0) {
-				this->_socketServer->add(context, socket);
+				char* fixedKey = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
+				char* wsKey = context->request()->getHeader("Sec-WebSocket-Key");
+				char appendedKey[128] = {0};
+				strcat(appendedKey, wsKey);
+				strcat(appendedKey, fixedKey);
+				uint8_t hash[20] = {0};
+				sha1(appendedKey, &hash[0]);
+
+				int toencodelen = base64_encode_expected_len(15);
+				char *encoded = new char[128];
+				base64_encode_chars((char*)hash, toencodelen, encoded);
+
+				context->response()->setResponseCode("HTTP/1.1 101 Switching Protocols");
+				context->response()->addHeader("Server", "httpd");
+				context->response()->addHeader("Upgrade", "websocket");
+				context->response()->addHeader("Connection", "Upgrade");
+				context->response()->addHeader("Sec-WebSocket-Accept", encoded);
+				context->response()->addHeader("Sec-WebSocket-Protocol", "firmata");
+				context->response()->addHeader("Sec-WebSocket-Version", "13");
+				context->response()->sendResponse();
+
+				_socketServer->add(socket);
 			}
 			else {
 				for(int i=0; i<this->_callbacks->count(); i++) {
@@ -85,9 +113,15 @@ namespace httpd {
 				}
 				// now we've run the callback and it has done whatever it needs to do output the result
 				context->response()->sendResponse();
+				// clean up
+				delete socket;
+				delete context;
 			}
 		}
-		delete context;
+		else {
+			delete socket;
+			delete context;
+		}
 		Serial.print("END    ");
 		Utils::printFreeHeap();
 		Serial.println();

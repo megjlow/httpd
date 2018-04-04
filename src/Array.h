@@ -19,6 +19,7 @@ public:
 		delete[] this->m_Array;
 	}
 	void add(T* element);
+	void remove(T* element);
 	T* get(int idx);
 	int count();
 private:
@@ -56,6 +57,34 @@ T* Array<T>::get(int idx) {
 template <typename T>
 int Array<T>::count() {
 	return this->m_Count;
+}
+
+template <typename T>
+void Array<T>::remove(T* element) {
+	if(m_Array != NULL) {
+		int foundPos = -1;
+		for(int i=0; i<m_Count; i++) {
+			element == m_Array[i];
+			foundPos = i;
+		}
+		if(foundPos >= 0) {
+			T** newArray = new T*[this->m_Size];
+			for(int i=0; i<m_Count; i++) {
+				if(i < foundPos) {
+					newArray[i] = m_Array[i];
+				}
+				else if(i > foundPos) {
+					newArray[i-1] = m_Array[i-1];
+				}
+			}
+			m_Count--;
+			for(int i=0; i<m_Count; i++) {
+				delete m_Array[i];
+				delete[] m_Array;
+				m_Array = newArray;
+			}
+		}
+	}
 }
 
 template <>

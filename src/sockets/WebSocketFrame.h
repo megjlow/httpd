@@ -1,20 +1,21 @@
 #ifndef websocketframe_h
 #define websocketframe_h
 
-typedef enum {
+enum Opcode {
 	continuation = 0x00,
 	text = 0x01,
 	binary = 0x02,
 	close = 0x08,
 	ping = 0x09,
 	pong = 0x0A
-} Opcode;
+};
 
 
 class WebSocketFrame {
 public:
 	WebSocketFrame();
 	WebSocketFrame(char* message);
+	WebSocketFrame(Opcode opcode, char* message);
 	~WebSocketFrame();
 	char* body();
 	int opCode();

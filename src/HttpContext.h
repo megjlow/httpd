@@ -21,9 +21,6 @@ private:
 	httpd::sockets::Socket* _socket;
 	HttpRequest* _request;
 	HttpResponse* _response;
-	char* method;
-	char* url;
-	char* setRequestUrl(char* url);
 };
 
 #endif

@@ -1,5 +1,6 @@
 #include <sockets/WebSocket.h>
 #include <sockets/Socket.h>
+#include "Utils.h"
 #include <Firmata.h>
 
 
@@ -21,7 +22,9 @@ namespace httpd {
 			return new WebSocketFrame((char*)buffer);
 		}
 
-		void WebSocket::sendTextMessage(char* msg) {
+		void WebSocket::sendTextMessage(char* msg2) {
+			char* msg = (char*) malloc(strlen(msg2) * 3 + 1);
+			Utils::urlEncode(msg, msg2);
 			int messageLen = strlen(msg);
 			int headerLen = 2;
 			if(messageLen > 126) {
@@ -55,6 +58,8 @@ namespace httpd {
 			}
 			Serial.println("]");
 
+			Utils::dumpWsMessage(responseMessage);
+
 
 			this->write((uint8_t*)responseMessage, headerLen + messageLen);
 			this->flush();
@@ -65,9 +70,8 @@ namespace httpd {
 		}
 
 		size_t WebSocket::write(uint8_t byte) {
-			Serial.println("WebSocket:write");
 			size_t retval = 0;
-			if(_buffer == NULL) {
+			if(this->_buffer == NULL) {
 				this->_buffer = (uint8_t*) calloc(64, sizeof(uint8_t));
 				this->_buffer[0] = byte;
 				this->_bufferPosition = 1;
@@ -78,7 +82,8 @@ namespace httpd {
 			}
 			retval = 1;
 			if(byte == END_SYSEX) {
-				this->write(_buffer, _bufferPosition -1);
+				//this->write(_buffer, _bufferPosition -1);
+				this->sendTextMessage((char*)_buffer);
 				_bufferPosition = 0;
 			}
 			return retval;
