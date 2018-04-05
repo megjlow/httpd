@@ -36,6 +36,8 @@ namespace httpd {
 		Array<SocketCallbackFunc>* _socketCallbacks;
 		Array<HttpHeader>* _globalHeaders;
 		WebSocketServer* _socketServer;
+
+		int _firmataConfigured = false;
 	};
 
 }

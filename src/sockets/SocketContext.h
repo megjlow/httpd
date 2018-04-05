@@ -13,7 +13,8 @@ namespace httpd {
 				SocketContext(Socket* socket);
 				~SocketContext();
 				char* getMessage();
-				void sendMessage(char* message);
+				void sendTextMessage(char* message);
+				void sendMessage(Opcode opcode, char* message);
 				int opCode();
 				void sendPong(char* message);
 			private:

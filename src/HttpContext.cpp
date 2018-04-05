@@ -14,6 +14,7 @@ HttpContext::HttpContext(Socket* socket) {
 
 
 HttpContext::~HttpContext() {
+	Serial.println("HttpContxt destructor");
 	delete this->_request;
 	delete this->_response;
 }

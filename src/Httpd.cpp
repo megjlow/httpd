@@ -14,6 +14,7 @@
 //#include "sockets/SocketContext.h"
 #include "events/CallbackFunc.h"
 #include "events/SocketCallbackFunc.h"
+#include "Firmata.h"
 
 using namespace httpd::sockets;
 using namespace httpd::events;
@@ -40,24 +41,31 @@ namespace httpd {
 	void Httpd::handleClient() {
 		Socket* socket = this->_server->available();
 		WebSocket* webSocket = this->_socketServer->available();
+		if(_firmataConfigured) {
+			while (Firmata.available()) {
+				Serial.println("Firmata processInput");
+				Firmata.processInput();
+			}
+		}
 		if(webSocket != NULL) {
 			unsigned long startTime = millis();
 			Serial.print("WEBSOCKET START  ");
 			Utils::printFreeHeap();
 			Serial.println();
 			if(this->_socketCallbacks->count() > 0) {
-				SocketContext* context = new SocketContext(webSocket);
-				if(context->opCode() == Opcode::close) {
+				//SocketContext* context = new SocketContext(webSocket);
+				//if(context->opCode() == Opcode::close) {
+				if(webSocket->opCode() == Opcode::close) {
 					_socketServer->remove(webSocket);
 					delete webSocket;
 				}
 				else {
 					for(int i=0; i<this->_socketCallbacks->count(); i++) {
 						SocketCallbackFunc *callback = this->_socketCallbacks->get(i);
-						(*callback->getCallback())(context);
+						(*callback->getCallback())(webSocket);
 					}
 				}
-				delete context;
+				//delete context;
 			}
 			unsigned long endTime = millis();
 			Serial.print("WEBSOCKET END    ");
@@ -80,6 +88,8 @@ namespace httpd {
 		if(context->request()->parseSuccess() == true) {
 			// check if it's a request to upgrade to a websocket, if it is then hand it off to the websocket server
 			if(context->request()->getHeader("Upgrade") != NULL && strcmp(context->request()->getHeader("Upgrade"), "websocket") == 0) {
+				Serial.print("protocol "); Serial.println(context->request()->getHeader("Sec-WebSocket-Protocol"));
+
 				char* fixedKey = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
 				char* wsKey = context->request()->getHeader("Sec-WebSocket-Key");
 				char appendedKey[128] = {0};
@@ -101,7 +111,14 @@ namespace httpd {
 				context->response()->addHeader("Sec-WebSocket-Version", "13");
 				context->response()->sendResponse();
 
-				_socketServer->add(socket);
+				//_socketServer->add(socket);
+				//Firmata.setFirmwareVersion(FIRMATA_FIRMWARE_MAJOR_VERSION, FIRMATA_FIRMWARE_MINOR_VERSION);
+				WebSocket* wSocket = new WebSocket(socket);
+
+				//Firmata.attach(ANALOG_MESSAGE, analogWriteCallback);
+
+				Firmata.begin(wSocket[0]);
+				_firmataConfigured = true;
 			}
 			else {
 				for(int i=0; i<this->_callbacks->count(); i++) {

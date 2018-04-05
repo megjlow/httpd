@@ -24,7 +24,7 @@ namespace httpd {
 #endif
 			Socket(const Socket* obj);
 			~Socket();
-			int available();
+			virtual int available();
 			uint8_t connected();
 			virtual size_t readBytes( char *buffer, size_t length);
 			size_t print(char);

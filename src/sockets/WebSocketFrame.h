@@ -19,6 +19,8 @@ public:
 	~WebSocketFrame();
 	char* body();
 	int opCode();
+	int read();
+	int available();
 private:
 	int _fin = 0;
 	int _rsv1 = 0;
@@ -29,6 +31,7 @@ private:
 	int _length = 0;
 	char _mask[4] = {0};
 	char* _body = NULL;
+	int _bufferPos = 0;
 	void dumpFrame();
 };
 

@@ -26,7 +26,7 @@ namespace httpd {
 			}
 
 			int Socket::available() {
-				return this->_client.available();
+				return _client.available();
 			}
 
 			uint8_t Socket::connected() {

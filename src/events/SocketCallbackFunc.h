@@ -9,7 +9,7 @@ namespace httpd {
 
 	namespace events {
 
-		typedef void (*SocketCallback)(httpd::sockets::SocketContext*);
+		typedef void (*SocketCallback)(httpd::sockets::Socket*);
 
 		class SocketCallbackFunc {
 		public:
