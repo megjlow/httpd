@@ -43,7 +43,6 @@ namespace httpd {
 		WebSocket* webSocket = this->_socketServer->available();
 		if(_firmataConfigured) {
 			while (Firmata.available()) {
-				Serial.println("Firmata processInput");
 				Firmata.processInput();
 			}
 		}

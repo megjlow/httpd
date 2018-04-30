@@ -2,6 +2,7 @@
 #define SRC_SOCKETS_WEBSOCKET_H_
 
 #include <Stream.h>
+#include "Array.h"
 #include "sockets/Socket.h"
 #include "sockets/WebSocketFrame.h"
 
@@ -20,12 +21,13 @@ namespace httpd {
 			virtual int available();
 
 			WebSocketFrame* readMessage();
+			void sendBinaryMessage(Opcode opcode, Array<char>* msg);
 			void sendMessage(Opcode opcode, char* msg);
 			char* getMessage();
 			int opCode();
 		private:
-			uint8_t* _buffer = NULL;
-			uint8_t _bufferPosition = 0;
+			//uint8_t* _buffer = NULL;
+			Array<char>* _buffer = NULL;
 			uint8_t* _inBuffer = NULL;
 			uint8_t _inBufferPos = 0;
 			int _inBufferSize = 0;

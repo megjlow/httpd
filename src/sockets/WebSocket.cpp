@@ -1,6 +1,7 @@
 #include <sockets/WebSocket.h>
 #include <sockets/Socket.h>
 #include "Utils.h"
+#include "Array.h"
 #include <Firmata.h>
 
 
@@ -47,6 +48,43 @@ namespace httpd {
 			return new WebSocketFrame((char*)buffer);
 		}
 
+		void WebSocket::sendBinaryMessage(Opcode opcode, Array<char>* msg) {
+			int messageLen = msg->count();
+			int headerLen = 2;
+			if(messageLen > 126) {
+				headerLen += 2;
+			}
+
+			char responseMessage[headerLen + messageLen + 1];
+			for(int i=0; i<headerLen; i++) {
+				responseMessage[i] = 0;
+			}
+			responseMessage[headerLen + messageLen] = 0;
+			responseMessage[0] |= bit(7); // fin
+			responseMessage[0] |= opcode;
+			//responseMessage[0] = 0x81;
+			//responseMessage[1] |= bit(7); // mask
+			responseMessage[1] |= msg->count();
+
+			char* b = &responseMessage[2];
+			for(int i=0; i<messageLen; i++) {
+				b[i] = *msg->get(i);
+			}
+
+			Serial.print("sending message: [");
+			for(int i=0; i<(headerLen + messageLen + 1); i++) {
+				Serial.print(responseMessage[i], HEX);
+				Serial.print(" ");
+			}
+			Serial.println("]");
+
+			Utils::dumpWsMessage(responseMessage);
+
+
+			this->write((uint8_t*)responseMessage, headerLen + messageLen);
+			this->flush();
+		}
+
 		void WebSocket::sendMessage(Opcode opcode, char* msg) {
 			int messageLen = strlen(msg);
 			int headerLen = 2;
@@ -75,7 +113,7 @@ namespace httpd {
 			}
 
 			Serial.print("sending message: [");
-			for(int i=0; i<(headerLen + messageLen); i++) {
+			for(int i=0; i<(headerLen + messageLen + 1); i++) {
 				Serial.print(responseMessage[i], HEX);
 				Serial.print(" ");
 			}
@@ -118,18 +156,15 @@ namespace httpd {
 		size_t WebSocket::write(uint8_t byte) {
 			size_t retval = 0;
 			if(this->_buffer == NULL) {
-				this->_buffer = (uint8_t*) calloc(64, sizeof(uint8_t));
-				this->_buffer[0] = byte;
-				this->_bufferPosition = 1;
+				this->_buffer = new Array<char>();
 			}
-			else {
-				this->_buffer[this->_bufferPosition] = byte;
-				this->_bufferPosition++;
-			}
+			this->_buffer->add((char*)&byte);
 			retval = 1;
 			if(byte == END_SYSEX) {
-				this->sendMessage(Opcode::binary, (char*)_buffer);
-				_bufferPosition = 0;
+				//this->sendBinaryMessage(Opcode::binary, (char*)_buffer);
+				this->sendBinaryMessage(Opcode::binary, this->_buffer);
+				delete this->_buffer;
+				this->_buffer = NULL;
 			}
 			return retval;
 		}

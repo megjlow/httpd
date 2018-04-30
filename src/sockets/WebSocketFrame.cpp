@@ -12,7 +12,7 @@ void WebSocketFrame::dumpFrame() {
 	Serial.print("masked: "); Serial.println(_masked);
 	Serial.print("length: "); Serial.println(_length);
 	Serial.print("mask: [");for(int i=0; i<4; i++) { Serial.print(_mask[i], HEX); Serial.print(" "); } Serial.println("]");
-	Serial.print("decoded: ["); for(int i=0; i<strlen(_body); i++) { Serial.print(_body[i], HEX); Serial.print(" "); } Serial.println("]");
+	Serial.print("decoded: ["); for(int i=0; i<_length; i++) { Serial.print(_body[i], HEX); Serial.print(" "); } Serial.println("]");
 }
 
 WebSocketFrame::WebSocketFrame() {
@@ -75,7 +75,8 @@ int WebSocketFrame::opCode() {
 int WebSocketFrame::available() {
 	int retval = 0;
 	if(_body != NULL) {
-		retval = strlen(_body) - _bufferPos;
+		//retval = strlen(_body) - _bufferPos;
+		retval = _length - _bufferPos;
 	}
 	return retval;
 }
@@ -83,7 +84,8 @@ int WebSocketFrame::available() {
 int WebSocketFrame::read() {
 	int retval = -1;
 	if(_body != NULL) {
-		if(_bufferPos < strlen(_body)) {
+		//if(_bufferPos < strlen(_body)) {
+		if(_bufferPos < _length) {
 			retval = _body[_bufferPos];
 			_bufferPos++;
 		}
