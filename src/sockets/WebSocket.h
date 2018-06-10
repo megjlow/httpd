@@ -19,6 +19,7 @@ namespace httpd {
 			virtual size_t readBytes(char *buffer, size_t length);
 			virtual int read();
 			virtual int available();
+			void flush();
 
 			WebSocketFrame* readMessage();
 			void sendBinaryMessage(Opcode opcode, Array<char>* msg);

@@ -38,6 +38,10 @@ namespace httpd {
 		this->_server->begin();
 	}
 
+	bool Httpd::firmataConnected() {
+		return _firmataConfigured;
+	}
+
 	void Httpd::handleClient() {
 		Socket* socket = this->_server->available();
 		WebSocket* webSocket = this->_socketServer->available();

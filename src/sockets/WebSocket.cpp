@@ -82,7 +82,7 @@ namespace httpd {
 
 
 			this->write((uint8_t*)responseMessage, headerLen + messageLen);
-			this->flush();
+			//this->flush();
 		}
 
 		void WebSocket::sendMessage(Opcode opcode, char* msg) {
@@ -119,11 +119,21 @@ namespace httpd {
 			}
 			Serial.println("]");
 
-			Utils::dumpWsMessage(responseMessage);
+			//Utils::dumpWsMessage(responseMessage);
 
-
+			Serial.println("WebSocket write begin");
 			this->write((uint8_t*)responseMessage, headerLen + messageLen);
+			Serial.println("WebSocket write complete");
 			this->flush();
+		}
+
+		void WebSocket::flush() {
+			if(this->_buffer != NULL && this->_buffer->count() > 0) {
+				this->sendBinaryMessage(Opcode::binary, this->_buffer);
+				delete this->_buffer;
+				this->_buffer = NULL;
+				Socket::flush();
+			}
 		}
 
 		int WebSocket::available() {
@@ -154,18 +164,21 @@ namespace httpd {
 		}
 
 		size_t WebSocket::write(uint8_t byte) {
+			Serial.print("WebSocket::write "); Serial.println(byte);
 			size_t retval = 0;
 			if(this->_buffer == NULL) {
 				this->_buffer = new Array<char>();
 			}
 			this->_buffer->add((char*)&byte);
 			retval = 1;
+			/*
 			if(byte == END_SYSEX) {
-				//this->sendBinaryMessage(Opcode::binary, (char*)_buffer);
+				Serial.println("WebSocked::write END_SYSEX");
 				this->sendBinaryMessage(Opcode::binary, this->_buffer);
 				delete this->_buffer;
 				this->_buffer = NULL;
 			}
+			*/
 			return retval;
 		}
 

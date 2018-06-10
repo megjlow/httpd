@@ -30,6 +30,7 @@ namespace httpd {
 		void addGlobalHeader(char* header, char* value);
 		void begin();
 		Array<CallbackFunc>* callbacks();
+		bool firmataConnected();
 	private:
 		ServerSocket* _server;
 		Array<CallbackFunc>* _callbacks;

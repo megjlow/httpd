@@ -35,8 +35,6 @@ namespace httpd {
 			uint8_t status();
 			void setNoDelay(bool nodelay);
 			bool getNoDelay();
-			void setWebSocket();
-			bool isWebSocket();
 
 			virtual size_t write(uint8_t byte);
 			virtual int read();
@@ -48,7 +46,6 @@ namespace httpd {
 #elif ARDUINO_STM32_FEATHER
 				AdafruitTCP _client;
 #endif
-			bool _isWebSocket;
 		protected:
 
 		};

@@ -11,7 +11,6 @@ namespace httpd {
 				Socket::Socket(AdafruitTCP client) {
 #endif
 				this->_client = client;
-				this->_isWebSocket = false;
 			}
 
 			Socket::Socket(const Socket* socket) {
@@ -67,14 +66,6 @@ namespace httpd {
 
 			bool Socket::getNoDelay() {
 				return this->_client.getNoDelay();
-			}
-
-			bool Socket::isWebSocket() {
-				return this->_isWebSocket;
-			}
-
-			void Socket::setWebSocket() {
-				this->_isWebSocket = true;
 			}
 
 			size_t Socket::write(uint8_t byte) {
