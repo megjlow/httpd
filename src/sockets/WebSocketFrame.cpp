@@ -5,7 +5,7 @@
 
 void WebSocketFrame::dumpFrame() {
 	Serial.print("fin: ");Serial.println(_fin);
-	Serial.print("rsv1: ");Serial.println(_rsv1);
+	//Serial.print("rsv1: ");Serial.println(_rsv1);
 	Serial.print("rsv2: "); Serial.println(_rsv2);
 	Serial.print("rsv3: "); Serial.println(_rsv3);
 	Serial.print("opcode: "); Serial.println(_opcode);
@@ -75,7 +75,6 @@ int WebSocketFrame::opCode() {
 int WebSocketFrame::available() {
 	int retval = 0;
 	if(_body != NULL) {
-		//retval = strlen(_body) - _bufferPos;
 		retval = _length - _bufferPos;
 	}
 	return retval;
@@ -84,7 +83,6 @@ int WebSocketFrame::available() {
 int WebSocketFrame::read() {
 	int retval = -1;
 	if(_body != NULL) {
-		//if(_bufferPos < strlen(_body)) {
 		if(_bufferPos < _length) {
 			retval = _body[_bufferPos];
 			_bufferPos++;

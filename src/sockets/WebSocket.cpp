@@ -145,7 +145,11 @@ namespace httpd {
 					_inFrame = NULL;
 				}
 				uint8_t buffer[avail];
+				for(int i=0; i<avail; i++) {
+					buffer[i] = 0;
+				}
 				this->readBytes((char*)buffer, avail);
+
 				_inFrame = new WebSocketFrame((char*)buffer);
 				retval = _inFrame->available();
 			}
@@ -164,21 +168,13 @@ namespace httpd {
 		}
 
 		size_t WebSocket::write(uint8_t byte) {
-			Serial.print("WebSocket::write "); Serial.println(byte);
 			size_t retval = 0;
 			if(this->_buffer == NULL) {
 				this->_buffer = new Array<char>();
 			}
 			this->_buffer->add((char*)&byte);
 			retval = 1;
-			/*
-			if(byte == END_SYSEX) {
-				Serial.println("WebSocked::write END_SYSEX");
-				this->sendBinaryMessage(Opcode::binary, this->_buffer);
-				delete this->_buffer;
-				this->_buffer = NULL;
-			}
-			*/
+
 			return retval;
 		}
 
