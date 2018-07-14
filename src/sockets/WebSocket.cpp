@@ -2,7 +2,6 @@
 #include <sockets/Socket.h>
 #include "Utils.h"
 #include "Array.h"
-#include <Firmata.h>
 
 
 namespace httpd {

@@ -14,7 +14,7 @@
 //#include "sockets/SocketContext.h"
 #include "events/CallbackFunc.h"
 #include "events/SocketCallbackFunc.h"
-#include "Firmata.h"
+#include "firmata/WSFirmata.h"
 
 using namespace httpd::sockets;
 using namespace httpd::events;
@@ -46,8 +46,8 @@ namespace httpd {
 		Socket* socket = this->_server->available();
 		WebSocket* webSocket = this->_socketServer->available();
 		if(_firmataConfigured) {
-			while (Firmata.available()) {
-				Firmata.processInput();
+			while (WSFirmata.available()) {
+				WSFirmata.processInput();
 			}
 		}
 		if(webSocket != NULL) {
@@ -120,7 +120,7 @@ namespace httpd {
 
 				//Firmata.attach(ANALOG_MESSAGE, analogWriteCallback);
 
-				Firmata.begin(wSocket[0]);
+				WSFirmata.begin(wSocket[0]);
 				_firmataConfigured = true;
 			}
 			else {
