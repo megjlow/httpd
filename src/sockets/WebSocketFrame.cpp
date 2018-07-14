@@ -4,6 +4,7 @@
 
 
 void WebSocketFrame::dumpFrame() {
+	Serial.println("<received>");
 	Serial.print("fin: ");Serial.println(_fin);
 	//Serial.print("rsv1: ");Serial.println(_rsv1);
 	Serial.print("rsv2: "); Serial.println(_rsv2);
@@ -13,6 +14,7 @@ void WebSocketFrame::dumpFrame() {
 	Serial.print("length: "); Serial.println(_length);
 	Serial.print("mask: [");for(int i=0; i<4; i++) { Serial.print(_mask[i], HEX); Serial.print(" "); } Serial.println("]");
 	Serial.print("decoded: ["); for(int i=0; i<_length; i++) { Serial.print(_body[i], HEX); Serial.print(" "); } Serial.println("]");
+	Serial.println("</received>");
 }
 
 WebSocketFrame::WebSocketFrame() {
