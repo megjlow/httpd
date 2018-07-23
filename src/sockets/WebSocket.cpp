@@ -44,7 +44,7 @@ namespace httpd {
 			int avail = this->available();
 			uint8_t buffer[avail];
 			this->readBytes((char*)buffer, avail);
-			return new WebSocketFrame((char*)buffer);
+			return new WebSocketFrame(buffer, avail);
 		}
 
 		void WebSocket::sendBinaryMessage(Opcode opcode, Array<char>* msg) {
@@ -131,8 +131,8 @@ namespace httpd {
 				this->sendBinaryMessage(Opcode::binary, this->_buffer);
 				delete this->_buffer;
 				this->_buffer = NULL;
-				Socket::flush();
 			}
+			Socket::flush();
 		}
 
 		int WebSocket::available() {
@@ -148,8 +148,7 @@ namespace httpd {
 					buffer[i] = 0;
 				}
 				this->readBytes((char*)buffer, avail);
-
-				_inFrame = new WebSocketFrame((char*)buffer);
+				_inFrame = new WebSocketFrame(buffer, avail);
 				retval = _inFrame->available();
 			}
 			else if(_inFrame != NULL){

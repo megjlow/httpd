@@ -25,7 +25,11 @@ namespace httpd {
 			}
 
 			int Socket::available() {
-				return _client.available();
+				int available = _client.available();
+				if(available > 0) {
+					Serial.print("Socket::available "); Serial.println(available);
+				}
+				return available;
 			}
 
 			uint8_t Socket::connected() {

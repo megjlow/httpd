@@ -244,7 +244,7 @@ void WSFirmataClass::setFirmwareNameAndVersion(const char *name, byte major, byt
  */
 int WSFirmataClass::available(void)
 {
-  return FirmataStream->available();
+	return FirmataStream->available();
 }
 
 /**

@@ -20,11 +20,7 @@ void WebSocketFrame::dumpFrame() {
 WebSocketFrame::WebSocketFrame() {
 }
 
-/*
- * Construct a web socket frame from an incoming message
- */
-WebSocketFrame::WebSocketFrame(char* message) {
-	_bufferPos = 0;
+uint8_t* WebSocketFrame::parseFrame(uint8_t* message) {
 	_fin = ((*message >> 7) & 0x01); // can't handle multi part messages so hope this is 0x01
 	_rsv1 = ((*message >> 6) & 0x01);
 	_rsv2 = ((*message >> 5) & 0x01);
@@ -49,14 +45,58 @@ WebSocketFrame::WebSocketFrame(char* message) {
 		_mask[i] = message[i];
 	}
 	message += 4;
-	char* body = message;
+	uint8_t* body = message;
+	/*
 	_body = new char[_length + 1];
 	for(int i=0; i<_length; i++) {
 		_body[i] = (body[i] ^ _mask[i % 4]);
 	}
 	_body[_length] = 0;
+	*/
 
-	dumpFrame();
+	uint8_t* retval = new uint8_t[_length + 1];
+	for(int i=0; i<_length; i++) {
+		retval[i] = (body[i] ^ _mask[i % 4]);
+	}
+	retval[_length] = 0;
+	return retval;
+}
+
+/*
+ * Construct a web socket frame from an incoming message
+ */
+WebSocketFrame::WebSocketFrame(uint8_t* message, int length) {
+	for(int i=0; i<length; i++) {
+		if(message[i] == 0x82) {
+			Serial.print("frame starts at "); Serial.println(i);
+			int bodyLen = _length;
+			_totalLength = length;
+			uint8_t* msg = parseFrame(&message[i]);
+			if(_body == NULL) {
+				_body = (char*) msg;
+			}
+			else {
+				int newLength = bodyLen + _length + 1;
+				char* tempBody = new char[newLength];
+				for(int j=0; j<bodyLen; j++) { // copy original message into _body
+					tempBody[j] = _body[j];
+				}
+				for(int j=0; j < _length; j++) {
+					tempBody[bodyLen + j] = msg[j];
+				}
+				tempBody[sizeof(tempBody)] = 0;
+
+				delete this->_body;
+				_body = tempBody;
+				_totalLength = newLength;
+			}
+		}
+	}
+
+	_bufferPos = 0;
+
+
+	//dumpFrame();
 
 }
 
@@ -77,7 +117,7 @@ int WebSocketFrame::opCode() {
 int WebSocketFrame::available() {
 	int retval = 0;
 	if(_body != NULL) {
-		retval = _length - _bufferPos;
+		retval = _totalLength - _bufferPos;
 	}
 	return retval;
 }

@@ -14,7 +14,7 @@ enum Opcode {
 class WebSocketFrame {
 public:
 	WebSocketFrame();
-	WebSocketFrame(char* message);
+	WebSocketFrame(uint8_t* message, int length);
 	WebSocketFrame(Opcode opcode, char* message);
 	~WebSocketFrame();
 	char* body();
@@ -29,9 +29,11 @@ private:
 	int _opcode = 0;
 	int _masked = 0;
 	int _length = 0;
+	int _totalLength = 0;
 	char _mask[4] = {0};
 	char* _body = NULL;
 	int _bufferPos = 0;
+	uint8_t* parseFrame(uint8_t* message);
 	void dumpFrame();
 };
 

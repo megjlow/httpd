@@ -13,7 +13,7 @@ namespace httpd {
 			int avail = socket->available();
 			uint8_t buffer[avail];
 			socket->readBytes((char*)buffer, avail);
-			_request = new WebSocketFrame((char*)buffer);
+			_request = new WebSocketFrame(buffer, avail);
 		}
 
 		SocketContext::~SocketContext() {
