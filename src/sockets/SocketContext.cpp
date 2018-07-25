@@ -28,7 +28,7 @@ namespace httpd {
 		char* SocketContext::getMessage() {
 			char* retval = NULL;
 			if(_request != NULL) {
-				retval = _request->body();
+				retval = (char*)_request->body();
 			}
 			return retval;
 		}

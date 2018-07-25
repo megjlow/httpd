@@ -138,7 +138,8 @@ namespace httpd {
 		int WebSocket::available() {
 			int retval = 0;
 			int avail = Socket::available();
-			if(avail > 0) {
+			int alreadyParsed = _inFrame != NULL ? _inFrame->available() : -1;
+			if(alreadyParsed <= 0 && avail > 0) { // used frames already parsed before we parse more
 				if(_inFrame != NULL) {
 					delete _inFrame;
 					_inFrame = NULL;

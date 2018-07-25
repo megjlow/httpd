@@ -1,3 +1,5 @@
+#include <sockets/Frame.h>
+
 #ifndef websocketframe_h
 #define websocketframe_h
 
@@ -17,7 +19,7 @@ public:
 	WebSocketFrame(uint8_t* message, int length);
 	WebSocketFrame(Opcode opcode, char* message);
 	~WebSocketFrame();
-	char* body();
+	uint8_t* body();
 	int opCode();
 	int read();
 	int available();
@@ -29,11 +31,13 @@ private:
 	int _opcode = 0;
 	int _masked = 0;
 	int _length = 0;
-	int _totalLength = 0;
 	char _mask[4] = {0};
-	char* _body = NULL;
+	uint8_t* _body = NULL;
+	//uint8_t* _tempBody = NULL;
+	//int _tempLength = 0;
+	//int _parsedMessageLength = 0;
 	int _bufferPos = 0;
-	uint8_t* parseFrame(uint8_t* message);
+	Frame* parseFrame(uint8_t* message);
 	void dumpFrame();
 };
 

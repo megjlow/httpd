@@ -244,7 +244,10 @@ void WSFirmataClass::setFirmwareNameAndVersion(const char *name, byte major, byt
  */
 int WSFirmataClass::available(void)
 {
-	return FirmataStream->available();
+	int available = FirmataStream->available();
+	//Serial.print("available "); Serial.println(available);
+	return available;
+	//return FirmataStream->available();
 }
 
 /**
@@ -254,7 +257,7 @@ void WSFirmataClass::processInput(void)
 {
   int inputData = FirmataStream->read(); // this is 'int' to handle -1 when no data
   if (inputData != -1) {
-    parser.parse(inputData);
+	  parser.parse(inputData);
   }
 }
 
